@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>布局诊断</title>
+<style>
+  body{margin:0;font:12px/1.5 ui-monospace,Consolas,monospace;background:#fff;color:#000;padding:12px}
+  iframe{width:820px;height:1000px;border:2px solid #d33;display:block;margin-bottom:12px}
+  table{border-collapse:collapse;font-size:12px;margin-bottom:10px}
+  td,th{border:1px solid #bbb;padding:3px 8px;text-align:right;white-space:nowrap}
+  th:first-child,td:first-child{text-align:left}
+  tr.bad{background:#ffe3e3;font-weight:bold}
+  .sum{font-size:13px;font-weight:bold;margin:6px 0}
+</style>
+</head>
+<body>
+<iframe id="f" src="../index.html#/e/giraffe"></iframe>
+<div id="out">measuring…</div>
+<script>
+const f = document.getElementById('f');
+f.addEventListener('load', () => setTimeout(() => {
+  const d = f.contentDocument, w = f.contentWindow;
+  const vw = w.innerWidth;
+  const targets = [
+    ['html', d.documentElement],
+    ['body', d.body],
+    ['.wrap', d.querySelector('.wrap')],
+    ['.detail', d.querySelector('.detail')],
+    ['.hero', d.querySelector('.hero')],
+    ['.hero .art', d.querySelector('.hero .art')],
+    ['.hero-txt', d.querySelector('.hero-txt')],
+    ['.hero-txt h2', d.querySelector('.hero-txt h2')],
+    ['.lead', d.querySelector('.lead')],
+    ['.sec-title', d.querySelector('.sec-title')],
+    ['.fact', d.querySelector('.fact')],
+    ['.actions', d.querySelector('.actions')]
+  ];
+  let html = '<table><tr><th>element</th><th>left</th><th>right</th><th>width</th><th>scrollW</th><th>clientW</th><th>overflow</th></tr>';
+  for (const [name, el] of targets) {
+    if (!el) { html += `<tr><td>${name}</td><td colspan="6">not found</td></tr>`; continue; }
+    const r = el.getBoundingClientRect();
+    const ov = r.right > vw + 0.5 || el.scrollWidth > el.clientWidth + 1;
+    html += `<tr class="${ov ? 'bad' : ''}"><td>${name}</td><td>${r.left.toFixed(1)}</td><td>${r.right.toFixed(1)}</td><td>${r.width.toFixed(1)}</td><td>${el.scrollWidth}</td><td>${el.clientWidth}</td><td>${ov ? 'YES' : 'no'}</td></tr>`;
+  }
+  html += '</table>';
+  html += `<div class="sum">viewport innerWidth = ${vw}px　|　documentElement.scrollWidth = ${d.documentElement.scrollWidth}px　|　body.scrollWidth = ${d.body.scrollWidth}px</div>`;
+  html += `<div class="sum">hero computed: display=${w.getComputedStyle(d.querySelector('.hero')).display}　flexDirection=${w.getComputedStyle(d.querySelector('.hero')).flexDirection}</div>`;
+  document.getElementById('out').innerHTML = html;
+}, 700));
+</script>
+</body>
+</html>

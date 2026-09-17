@@ -1,0 +1,39 @@
+# ---------- 运行时与依赖 ----------
+node_modules/
+npm-debug.log*
+yarn-error.log*
+package-lock.json.bak
+
+# ---------- 构建产物 ----------
+# build-www.mjs 生成的 www/，交给 capacitor；源码才是源
+www/
+
+# Android 工程里 Capacitor / Gradle 生成的产物
+android/app/build/
+android/.gradle/
+android/app/release/
+android/app/src/main/assets/public/
+android/app/src/main/assets/capacitor.config.json
+android/local.properties
+android/captures/
+
+# 出包产物
+dist/
+
+# ---------- 工程中间产物 ----------
+# Chrome profile + 无头浏览器的临时目录
+.workbuddy-ai/tmp/
+
+# 截图都是视觉验证中间产物，6 MB 不入仓
+# （.preview/*.html 和 verify-apk.py 仍入仓，是量测辅助页 + 开包验脚本）
+.preview/*.png
+
+# IDE / 编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# 系统垃圾
+Thumbs.db

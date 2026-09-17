@@ -1,0 +1,48 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    
+    repositories {
+        // ── 国内镜像优先（弱网构建必备）────────────────────────────────
+        // 实测（2026-09-17，广东江门）：
+        //   阿里云 google 镜像 取 AGP 8.13.0 → 0.13s
+        //   阿里云 public 镜像 取 kotlin-stdlib  → 0.05s
+        //   dl.google.com 官方（对照）           → 0.22s
+        //   repo.maven.apache.org 官方（对照）   → 0.86s
+        //   plugins.gradle.org                   → 6.97s（最慢，且返回 404）
+        //
+        // Gradle 解析依赖时会对每个坐标按声明顺序逐个仓库试探，官方源在弱网下
+        // 会把「单次数秒的等待」乘上坐标数量，放大成「看起来卡死」。
+        // 镜像放前面可显著缩短总耗时；官方源保留在末尾兜底，镜像未同步到的
+        // 坐标仍能取到，不会因镜像不全而构建失败。
+        //
+        // 注意：若用 `cap add android` 重新生成本目录，这两处镜像需重新补上。
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.13.0'
+        classpath 'com.google.gms:google-services:4.4.4'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+apply from: "variables.gradle"
+
+allprojects {
+    repositories {
+        // 同 buildscript：镜像优先，官方兜底（理由见文件顶部注释）
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        google()
+        mavenCentral()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

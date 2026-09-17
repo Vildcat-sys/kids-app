@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>shot-map</title>
+<link rel="stylesheet" href="../src/styles.css">
+<style>
+  /* 关掉全部动画：--virtual-time-budget 不推进 CSS 动画时钟，
+     不关的话入场动画会永远停在 opacity:0，截出来一片空白 */
+  * { animation: none !important; transition: none !important; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script type="module">
+import { renderMap } from '../src/ui/map.js';
+import { getGroupsForAge } from '../src/data/index.js';
+
+const params = new URLSearchParams(location.search);
+const band = params.get('band') || 'all';
+// learned=N：把前 N 个知识点标记为已掌握，用来同时看到
+// 「已点亮 / 下一个 / 未点亮」三种驿站状态
+const learned = Number(params.get('learned') || 0);
+// review=K：把已点亮的前 K 个标为「该温习了」，看第四态视觉
+const review = Number(params.get('review') || 0);
+
+const allItems = getGroupsForAge(band).flatMap((g) => g.topics.flatMap((t) => t.items));
+const learnedIds = allItems.slice(0, learned).map((i) => i.id);
+const reviewIds = new Set(learnedIds.slice(0, review));
+
+// store stub：用最少的接口支持 has + needsReview
+const store = {
+  has: (id) => learnedIds.includes(id),
+  needsReview: (id) => reviewIds.has(id),
+};
+const prefs = { ageBand: () => band };
+
+renderMap({
+  container: document.getElementById('app'),
+  store,
+  prefs,
+  go: () => {},
+});
+
+document.title = `map-${band}-${learned}`;
+document.body.setAttribute('data-band', band);
+document.body.setAttribute('data-learned', String(learned));
+document.body.setAttribute('data-total', String(allItems.length));
+</script>
+</body>
+</html>

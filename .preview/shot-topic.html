@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>shot-topic</title>
+<link rel="stylesheet" href="../src/styles.css">
+<style>
+  /* 关掉全部动画：--virtual-time-budget 不推进 CSS 动画时钟，
+     不关的话卡片入场动画会永远停在 opacity:0，截出来一片空白 */
+  * { animation: none !important; transition: none !important; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script type="module">
+import { renderTopic } from '../src/ui/topic.js';
+import { findTopicForAge } from '../src/data/index.js';
+
+const params = new URLSearchParams(location.search);
+const topicId = params.get('topic') || 'geo';
+const band = params.get('band') || 'all';
+const topic = findTopicForAge(topicId, band);
+
+// renderTopic 只用到 store.has()，这里给个空实现即可，
+// 目的是量布局而不是验证进度逻辑（进度另有 store.test.mjs 覆盖）
+const store = { has: () => false };
+
+renderTopic({
+  container: document.getElementById('app'),
+  topic,
+  store,
+  band,
+  go: () => {},
+});
+
+document.title = `topic-${topicId}-${band}-${topic.items.length}`;
+document.body.setAttribute('data-band', band);
+document.body.setAttribute('data-count', String(topic.items.length));
+</script>
+</body>
+</html>

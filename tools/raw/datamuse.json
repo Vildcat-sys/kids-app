@@ -1,0 +1,821 @@
+{
+ "source": "datamuse",
+ "desc": "Datamuse 词义联想 —— 为听音选词题生成**同主题干扰项**候选，替代手拍脑袋想干扰词",
+ "fetchedAt": "2026-09-17T12:43:44.937Z",
+ "data": [
+  {
+   "word": "apple",
+   "related": [
+    {
+     "w": "malus pumila",
+     "tags": [
+      "syn",
+      "n",
+      "prop",
+      "results_type:primary_rel",
+      "f:0.000000"
+     ]
+    },
+    {
+     "w": "orchard apple tree",
+     "tags": [
+      "syn",
+      "n",
+      "f:0.000000"
+     ]
+    },
+    {
+     "w": "pomme",
+     "tags": [
+      "n",
+      "f:0.062456"
+     ]
+    },
+    {
+     "w": "potato",
+     "tags": [
+      "n",
+      "f:5.392610"
+     ]
+    },
+    {
+     "w": "tator",
+     "tags": [
+      "n",
+      "f:0.034601"
+     ]
+    },
+    {
+     "w": "fruit",
+     "tags": [
+      "n",
+      "f:25.327732"
+     ]
+    },
+    {
+     "w": "vegetable",
+     "tags": [
+      "n",
+      "f:7.458261"
+     ]
+    },
+    {
+     "w": "tree",
+     "tags": [
+      "n",
+      "f:55.037083"
+     ]
+    },
+    {
+     "w": "russet",
+     "tags": [
+      "n",
+      "f:0.352360"
+     ]
+    },
+    {
+     "w": "hash",
+     "tags": [
+      "n",
+      "f:1.692210"
+     ]
+    },
+    {
+     "w": "strudel",
+     "tags": [
+      "n",
+      "f:0.078831"
+     ]
+    },
+    {
+     "w": "pie",
+     "tags": [
+      "n",
+      "f:5.261189"
+     ]
+    }
+   ]
+  },
+  {
+   "word": "blue",
+   "related": [
+    {
+     "w": "bluish",
+     "tags": [
+      "syn",
+      "adj",
+      "results_type:primary_rel",
+      "f:1.433843"
+     ]
+    },
+    {
+     "w": "blue sky",
+     "tags": [
+      "syn",
+      "adj",
+      "f:2.479766"
+     ]
+    },
+    {
+     "w": "blueish",
+     "tags": [
+      "syn",
+      "adj",
+      "f:0.025912"
+     ]
+    },
+    {
+     "w": "spicy",
+     "tags": [
+      "syn",
+      "adj",
+      "f:0.961256"
+     ]
+    },
+    {
+     "w": "amytal",
+     "tags": [
+      "syn",
+      "n",
+      "f:0.141208"
+     ]
+    },
+    {
+     "w": "low",
+     "tags": [
+      "syn",
+      "adj",
+      "n",
+      "adv",
+      "v",
+      "f:164.781816"
+     ]
+    },
+    {
+     "w": "colored",
+     "tags": [
+      "syn",
+      "adj",
+      "n",
+      "f:15.384330"
+     ]
+    },
+    {
+     "w": "colorful",
+     "tags": [
+      "syn",
+      "adj",
+      "f:3.813630"
+     ]
+    },
+    {
+     "w": "coloured",
+     "tags": [
+      "syn",
+      "adj",
+      "n",
+      "f:7.896342"
+     ]
+    },
+    {
+     "w": "chromatic",
+     "tags": [
+      "syn",
+      "adj",
+      "f:1.074927"
+     ]
+    },
+    {
+     "w": "gamey",
+     "tags": [
+      "syn",
+      "adj",
+      "f:0.027942"
+     ]
+    },
+    {
+     "w": "gamy",
+     "tags": [
+      "syn",
+      "adj",
+      "f:0.032663"
+     ]
+    }
+   ]
+  },
+  {
+   "word": "cat",
+   "related": [
+    {
+     "w": "big cat",
+     "tags": [
+      "syn",
+      "n",
+      "prop",
+      "results_type:primary_rel",
+      "f:0.148161"
+     ]
+    },
+    {
+     "w": "chuck",
+     "tags": [
+      "syn",
+      "n",
+      "f:2.794477"
+     ]
+    },
+    {
+     "w": "caterpillar",
+     "tags": [
+      "syn",
+      "n",
+      "f:1.033979"
+     ]
+    },
+    {
+     "w": "vomit",
+     "tags": [
+      "syn",
+      "n",
+      "f:1.144050"
+     ]
+    },
+    {
+     "w": "regurgitate",
+     "tags": [
+      "syn",
+      "n",
+      "f:0.093201"
+     ]
+    },
+    {
+     "w": "spew",
+     "tags": [
+      "syn",
+      "n",
+      "f:0.164588"
+     ]
+    },
+    {
+     "w": "regorge",
+     "tags": [
+      "syn",
+      "v",
+      "f:0.000789"
+     ]
+    },
+    {
+     "w": "disgorge",
+     "tags": [
+      "syn",
+      "v",
+      "f:0.103757"
+     ]
+    },
+    {
+     "w": "retch",
+     "tags": [
+      "syn",
+      "n",
+      "f:0.086747"
+     ]
+    },
+    {
+     "w": "puke",
+     "tags": [
+      "syn",
+      "n",
+      "f:0.221677"
+     ]
+    },
+    {
+     "w": "upchuck",
+     "tags": [
+      "syn",
+      "n",
+      "f:0.007940"
+     ]
+    },
+    {
+     "w": "barf",
+     "tags": [
+      "syn",
+      "n",
+      "f:0.058738"
+     ]
+    }
+   ]
+  },
+  {
+   "word": "milk",
+   "related": [
+    {
+     "w": "milky",
+     "tags": [
+      "syn",
+      "adj",
+      "n",
+      "prop",
+      "results_type:primary_rel",
+      "f:1.633956"
+     ]
+    },
+    {
+     "w": "milklike",
+     "tags": [
+      "syn",
+      "adj",
+      "f:0.003849"
+     ]
+    },
+    {
+     "w": "whitish",
+     "tags": [
+      "syn",
+      "adj",
+      "f:1.067843"
+     ]
+    },
+    {
+     "w": "opaque",
+     "tags": [
+      "syn",
+      "n",
+      "f:3.306771"
+     ]
+    },
+    {
+     "w": "milk river",
+     "tags": [
+      "syn",
+      "n",
+      "f:0.090125"
+     ]
+    },
+    {
+     "w": "lactate",
+     "tags": [
+      "n",
+      "f:1.828412"
+     ]
+    },
+    {
+     "w": "cream",
+     "tags": [
+      "n",
+      "f:12.208817"
+     ]
+    },
+    {
+     "w": "soup",
+     "tags": [
+      "n",
+      "f:6.662917"
+     ]
+    },
+    {
+     "w": "breastmilk",
+     "tags": [
+      "n",
+      "f:0.070000"
+     ]
+    },
+    {
+     "w": "dairy",
+     "tags": [
+      "n",
+      "f:6.068370"
+     ]
+    },
+    {
+     "w": "milkman",
+     "tags": [
+      "n",
+      "f:0.300314"
+     ]
+    },
+    {
+     "w": "lactation",
+     "tags": [
+      "n",
+      "f:1.605158"
+     ]
+    }
+   ]
+  },
+  {
+   "word": "run",
+   "related": [
+    {
+     "w": "scarper",
+     "tags": [
+      "syn",
+      "v",
+      "n",
+      "results_type:primary_rel",
+      "f:0.005454"
+     ]
+    },
+    {
+     "w": "run away",
+     "tags": [
+      "syn",
+      "v",
+      "f:5.223706"
+     ]
+    },
+    {
+     "w": "turn tail",
+     "tags": [
+      "syn",
+      "v",
+      "f:0.073155"
+     ]
+    },
+    {
+     "w": "break away",
+     "tags": [
+      "syn",
+      "v",
+      "f:1.344008"
+     ]
+    },
+    {
+     "w": "track down",
+     "tags": [
+      "syn",
+      "v",
+      "f:1.027942"
+     ]
+    },
+    {
+     "w": "lean",
+     "tags": [
+      "syn",
+      "adj",
+      "v",
+      "n",
+      "f:7.952016"
+     ]
+    },
+    {
+     "w": "move",
+     "tags": [
+      "syn",
+      "v",
+      "n",
+      "f:89.247720"
+     ]
+    },
+    {
+     "w": "lam",
+     "tags": [
+      "syn",
+      "n",
+      "v",
+      "f:1.630361"
+     ]
+    },
+    {
+     "w": "pass",
+     "tags": [
+      "syn",
+      "v",
+      "n",
+      "f:53.630642"
+     ]
+    },
+    {
+     "w": "carry",
+     "tags": [
+      "syn",
+      "v",
+      "n",
+      "f:50.628573"
+     ]
+    },
+    {
+     "w": "incline",
+     "tags": [
+      "syn",
+      "n",
+      "v",
+      "f:1.517118"
+     ]
+    },
+    {
+     "w": "unravel",
+     "tags": [
+      "syn",
+      "v",
+      "f:1.036766"
+     ]
+    }
+   ]
+  },
+  {
+   "word": "hand",
+   "related": [
+    {
+     "w": "manus",
+     "tags": [
+      "syn",
+      "n",
+      "results_type:primary_rel",
+      "f:0.475909"
+     ]
+    },
+    {
+     "w": "paw",
+     "tags": [
+      "syn",
+      "n",
+      "f:1.455407"
+     ]
+    },
+    {
+     "w": "hired hand",
+     "tags": [
+      "syn",
+      "n",
+      "f:0.178707"
+     ]
+    },
+    {
+     "w": "mitt",
+     "tags": [
+      "syn",
+      "n",
+      "f:0.492201"
+     ]
+    },
+    {
+     "w": "mauler",
+     "tags": [
+      "syn",
+      "n",
+      "f:0.033178"
+     ]
+    },
+    {
+     "w": "hook",
+     "tags": [
+      "syn",
+      "n",
+      "f:7.480840"
+     ]
+    },
+    {
+     "w": "reach",
+     "tags": [
+      "syn",
+      "n",
+      "f:51.865114"
+     ]
+    },
+    {
+     "w": "handwriting",
+     "tags": [
+      "syn",
+      "n",
+      "f:2.900635"
+     ]
+    },
+    {
+     "w": "script",
+     "tags": [
+      "syn",
+      "n",
+      "f:12.338031"
+     ]
+    },
+    {
+     "w": "pass",
+     "tags": [
+      "syn",
+      "n",
+      "f:53.630642"
+     ]
+    },
+    {
+     "w": "turn over",
+     "tags": [
+      "syn",
+      "v",
+      "f:2.163454"
+     ]
+    },
+    {
+     "w": "pass on",
+     "tags": [
+      "syn",
+      "v",
+      "f:4.052138"
+     ]
+    }
+   ]
+  },
+  {
+   "word": "sunny",
+   "related": [
+    {
+     "w": "sunshiny",
+     "tags": [
+      "syn",
+      "adj",
+      "results_type:primary_rel",
+      "f:0.062631"
+     ]
+    },
+    {
+     "w": "shining",
+     "tags": [
+      "syn",
+      "adj",
+      "f:7.078903"
+     ]
+    },
+    {
+     "w": "shiny",
+     "tags": [
+      "syn",
+      "adj",
+      "f:3.165701"
+     ]
+    },
+    {
+     "w": "bright",
+     "tags": [
+      "syn",
+      "adj",
+      "f:28.536653"
+     ]
+    },
+    {
+     "w": "clear",
+     "tags": [
+      "syn",
+      "adj",
+      "f:135.451317"
+     ]
+    },
+    {
+     "w": "cheerful",
+     "tags": [
+      "syn",
+      "adj",
+      "f:5.055682"
+     ]
+    },
+    {
+     "w": "cheery",
+     "tags": [
+      "syn",
+      "adj",
+      "f:0.662631"
+     ]
+    },
+    {
+     "w": "gay",
+     "tags": [
+      "syn",
+      "adj",
+      "prop",
+      "f:17.528519"
+     ]
+    },
+    {
+     "w": "sunshine",
+     "tags": [
+      "adj",
+      "n",
+      "f:4.964602"
+     ]
+    },
+    {
+     "w": "cloudy",
+     "tags": [
+      "adj",
+      "ant",
+      "f:1.985369"
+     ]
+    },
+    {
+     "w": "ground",
+     "tags": [
+      "adj",
+      "f:97.369025"
+     ]
+    },
+    {
+     "w": "sun",
+     "tags": [
+      "n",
+      "v",
+      "f:61.777745"
+     ]
+    }
+   ]
+  },
+  {
+   "word": "mom",
+   "related": [
+    {
+     "w": "mama",
+     "tags": [
+      "syn",
+      "n",
+      "results_type:primary_rel",
+      "f:7.840118"
+     ]
+    },
+    {
+     "w": "mum",
+     "tags": [
+      "syn",
+      "n",
+      "f:2.576130"
+     ]
+    },
+    {
+     "w": "mommy",
+     "tags": [
+      "syn",
+      "n",
+      "f:1.698271"
+     ]
+    },
+    {
+     "w": "momma",
+     "tags": [
+      "syn",
+      "n",
+      "f:0.982820"
+     ]
+    },
+    {
+     "w": "mammy",
+     "tags": [
+      "syn",
+      "n",
+      "f:0.559446"
+     ]
+    },
+    {
+     "w": "mater",
+     "tags": [
+      "syn",
+      "n",
+      "f:2.968693"
+     ]
+    },
+    {
+     "w": "mummy",
+     "tags": [
+      "syn",
+      "n",
+      "f:1.530433"
+     ]
+    },
+    {
+     "w": "mamma",
+     "tags": [
+      "syn",
+      "n",
+      "f:1.996539"
+     ]
+    },
+    {
+     "w": "ma",
+     "tags": [
+      "syn",
+      "n",
+      "prop",
+      "f:27.615952"
+     ]
+    },
+    {
+     "w": "mam",
+     "tags": [
+      "n",
+      "f:0.958767"
+     ]
+    },
+    {
+     "w": "amma",
+     "tags": [
+      "n",
+      "f:0.325556"
+     ]
+    },
+    {
+     "w": "mami",
+     "tags": [
+      "n",
+      "f:0.211089"
+     ]
+    }
+   ]
+  }
+ ]
+}

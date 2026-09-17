@@ -1,0 +1,133 @@
+{
+ "source": "quake",
+ "desc": "USGS 地震目录 —— 近 30 天 M4.5 以上地震。用于「地球 / 自然灾害」主题",
+ "fetchedAt": "2026-09-17T12:44:41.860Z",
+ "data": {
+  "returned": 20,
+  "windowDays": 30,
+  "minMagnitude": 4.5,
+  "generated": 1789649079000,
+  "events": [
+   {
+    "magnitude": 6.7,
+    "place": "38 km NE of Tambo, Peru",
+    "depthKm": 99,
+    "time": "2026-08-20T18:00:18.619Z"
+   },
+   {
+    "magnitude": 6.5,
+    "place": "126 km NNE of Teluknaga, Indonesia",
+    "depthKm": 372,
+    "time": "2026-09-11T21:23:55.907Z"
+   },
+   {
+    "magnitude": 6.3,
+    "place": "84 km SSW of Nikolski, Alaska",
+    "depthKm": 35,
+    "time": "2026-09-03T11:17:24.056Z"
+   },
+   {
+    "magnitude": 6.2,
+    "place": "South Sandwich Islands region",
+    "depthKm": 125.905,
+    "time": "2026-09-02T23:46:57.617Z"
+   },
+   {
+    "magnitude": 6.2,
+    "place": "Scotia Sea",
+    "depthKm": 10,
+    "time": "2026-08-22T08:22:37.923Z"
+   },
+   {
+    "magnitude": 6,
+    "place": "145 km N of Caluula, Somalia",
+    "depthKm": 10,
+    "time": "2026-08-27T21:07:38.352Z"
+   },
+   {
+    "magnitude": 6,
+    "place": "211 km NNE of Lospalos, Timor Leste",
+    "depthKm": 10,
+    "time": "2026-08-24T14:10:17.347Z"
+   },
+   {
+    "magnitude": 6,
+    "place": "32 km SSW of Honchō, Japan",
+    "depthKm": 41,
+    "time": "2026-08-23T13:44:53.389Z"
+   },
+   {
+    "magnitude": 5.9,
+    "place": "253 km ENE of Lospalos, Timor Leste",
+    "depthKm": 111.763,
+    "time": "2026-09-11T11:56:23.115Z"
+   },
+   {
+    "magnitude": 5.9,
+    "place": "southern East Pacific Rise",
+    "depthKm": 10,
+    "time": "2026-09-02T12:35:56.627Z"
+   },
+   {
+    "magnitude": 5.8,
+    "place": "Kermadec Islands, New Zealand",
+    "depthKm": 35,
+    "time": "2026-08-30T09:02:09.229Z"
+   },
+   {
+    "magnitude": 5.8,
+    "place": "5 km E of Ushiku, Japan",
+    "depthKm": 61,
+    "time": "2026-08-22T17:00:39.194Z"
+   },
+   {
+    "magnitude": 5.8,
+    "place": "187 km SW of Labuan, Indonesia",
+    "depthKm": 9,
+    "time": "2026-08-21T17:41:44.174Z"
+   },
+   {
+    "magnitude": 5.8,
+    "place": "31 km NNE of Ruteng, Indonesia",
+    "depthKm": 10,
+    "time": "2026-08-19T22:45:17.290Z"
+   },
+   {
+    "magnitude": 5.8,
+    "place": "98 km SW of Puerto Madero, Mexico",
+    "depthKm": 10,
+    "time": "2026-08-18T05:02:31.624Z"
+   },
+   {
+    "magnitude": 5.7,
+    "place": "Scotia Sea",
+    "depthKm": 10,
+    "time": "2026-08-22T07:40:12.636Z"
+   },
+   {
+    "magnitude": 5.6,
+    "place": "78 km NNE of Tobelo, Indonesia",
+    "depthKm": 162.179,
+    "time": "2026-09-14T10:58:03.047Z"
+   },
+   {
+    "magnitude": 5.6,
+    "place": "93 km SE of Kirakira, Solomon Islands",
+    "depthKm": 38.543,
+    "time": "2026-09-06T04:05:30.141Z"
+   },
+   {
+    "magnitude": 5.6,
+    "place": "89 km ESE of Isangel, Vanuatu",
+    "depthKm": 9,
+    "time": "2026-09-05T17:02:11.369Z"
+   },
+   {
+    "magnitude": 5.6,
+    "place": "71 km WSW of Puerto Madero, Mexico",
+    "depthKm": 10,
+    "time": "2026-09-02T12:28:31.022Z"
+   }
+  ]
+ }
+}

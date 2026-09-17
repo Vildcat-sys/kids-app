@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>shot-home</title>
+<link rel="stylesheet" href="../src/styles.css">
+<style>
+  /* 关掉全部动画：--virtual-time-budget 不推进 CSS 动画时钟，
+     不关的话卡片入场动画会永远停在 opacity:0，截出来一片空白 */
+  * { animation: none !important; transition: none !important; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script type="module">
+import { renderHome } from '../src/ui/home.js';
+import { createPrefs } from '../src/core/prefs.js';
+import { getTopicsForAge } from '../src/data/index.js';
+
+const params = new URLSearchParams(location.search);
+const band = params.get('band') || 'all';
+const asked = params.get('asked') === '1';
+const learnedN = Number(params.get('learned') || 0);
+const reviewK = Number(params.get('review') || 0);
+
+// 用一次性内存 storage，保证每次截图都是干净状态，
+// 不受上一次运行残留的 localStorage 影响（传 null 会回落到真实 localStorage）
+const scratch = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
+const prefs = createPrefs({ storage: scratch });
+prefs.setAgeBand(band);
+if (asked) prefs.markAskedAge();
+
+const allItems = getTopicsForAge(band).flatMap((t) => t.items);
+const learnedIds = allItems.slice(0, learnedN).map((i) => i.id);
+const reviewIds = new Set(learnedIds.slice(0, reviewK));
+
+renderHome({
+  container: document.getElementById('app'),
+  store: {
+    has: (id) => learnedIds.includes(id),
+    needsReview: (id) => reviewIds.has(id),
+  },
+  prefs,
+  go: () => {},
+});
+
+document.title = `home-${band}-asked${asked ? 1 : 0}`;
+document.body.setAttribute('data-band', band);
+document.body.setAttribute('data-topics', String(topics.length));
+document.body.setAttribute(
+  'data-items',
+  String(topics.reduce((n, t) => n + t.items.length, 0))
+);
+</script>
+</body>
+</html>

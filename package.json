@@ -1,0 +1,27 @@
+{
+  "name": "kids-encyclopedia",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "给 3-8 岁孩子的离线早教应用：六大领域知识卡 + 语音朗读 + 多题型互动练习",
+  "scripts": {
+    "start": "python -m http.server 8765",
+    "validate": "node tools/validate-content.mjs",
+    "test": "node --test",
+    "check": "npm run validate && npm run test",
+    "fetch": "node tools/fetch-content.mjs",
+    "www": "node tools/build-www.mjs",
+    "cap:add": "npm run www && cap add android",
+    "cap:sync": "npm run www && cap sync android",
+    "pack": "npm run check && npm run cap:sync",
+    "apk": "npm run pack && cd android && gradlew assembleDebug"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/cli": "^8.5.2",
+    "@capacitor/core": "^8.5.2"
+  }
+}

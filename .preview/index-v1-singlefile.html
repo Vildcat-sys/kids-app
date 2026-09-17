@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#FFFBF5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="小小百科">
+<title>小小百科 · 给孩子的第一个百科</title>
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{
+  --bg:#FFFBF5; --card:#FFFFFF; --line:#EFE7DC; --line-2:#E3D9CB;
+  --ink:#2D2A26; --ink2:#8A8178; --ink3:#B5ACA1;
+  --accent:#E8734A; --ok:#3FA96A; --no:#DE5F4C;
+  --r:20px; --r-lg:26px;
+  --sh:0 1px 2px rgba(45,42,38,.04), 0 6px 20px rgba(45,42,38,.05);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;height:100%}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:system-ui,-apple-system,'PingFang SC','HarmonyOS Sans SC','MiSans','Noto Sans CJK SC','Microsoft YaHei',sans-serif;
+  touch-action:manipulation;
+  -webkit-user-select:none; user-select:none;
+  overflow-x:hidden;
+  font-size:16px; line-height:1.6;
+}
+button{font-family:inherit;border:none;background:none;cursor:pointer;color:inherit}
+
+/* ---------- 顶栏 ---------- */
+header{
+  position:sticky; top:0; z-index:20;
+  background:rgba(255,251,245,.9);
+  -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+  padding:12px 20px;
+  padding-top:calc(12px + env(safe-area-inset-top));
+  display:flex; align-items:center; gap:14px;
+}
+.brand{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:500;letter-spacing:.01em}
+.brand-dot{width:12px;height:12px;border-radius:50%;background:var(--accent);flex:none}
+.spacer{flex:1}
+.stars{
+  display:flex;align-items:center;gap:7px;
+  background:#FFF3E6;border:1px solid #F6DCC4;border-radius:999px;
+  padding:6px 14px;font-size:15px;font-weight:500;color:#A45A2E;white-space:nowrap;
+}
+.stars svg{width:16px;height:16px;flex:none}
+.iconbtn{
+  width:46px;height:46px;border-radius:14px;flex:none;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--card);border:1px solid var(--line);
+  transition:transform .15s ease,background .15s ease;
+}
+.iconbtn:active{transform:scale(.92)}
+.iconbtn svg{width:22px;height:22px}
+
+/* ---------- 首页 ---------- */
+main{padding-bottom:calc(40px + env(safe-area-inset-bottom))}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+.intro{padding:22px 0 4px}
+.intro h1{margin:0 0 6px;font-size:26px;font-weight:500;letter-spacing:-.01em}
+.intro p{margin:0;color:var(--ink2);font-size:15px}
+
+.grid{
+  display:grid; gap:16px; padding:20px 0 8px;
+  grid-template-columns:repeat(auto-fill,minmax(178px,1fr));
+}
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--r-lg);
+  padding:14px 14px 16px; box-shadow:var(--sh);
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  transition:transform .18s cubic-bezier(.2,.8,.3,1), box-shadow .18s ease, border-color .18s ease;
+  position:relative; overflow:hidden;
+}
+.card:active{transform:scale(.965)}
+.card .art{width:100%;max-width:150px;aspect-ratio:1;display:block}
+.card .art svg{width:100%;height:100%;display:block}
+.card .nm{font-size:19px;font-weight:500;letter-spacing:.02em}
+.card .py{font-size:12.5px;color:var(--ink3);margin-top:-6px;letter-spacing:.03em}
+.badge{
+  position:absolute;top:12px;right:12px;
+  width:26px;height:26px;border-radius:50%;
+  background:var(--ok);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;opacity:0;transform:scale(.5);
+  transition:opacity .25s ease,transform .25s cubic-bezier(.2,1.3,.4,1);
+}
+.card.done .badge{opacity:1;transform:scale(1)}
+
+/* ---------- 详情页 ---------- */
+/* 注意：本元素同时带 .wrap，左右内边距由 .wrap 提供，这里只能设上下 */
+.detail{padding-top:22px;padding-bottom:22px}
+.back{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:11px 18px 11px 14px;font-size:15px;font-weight:500;
+  margin-bottom:18px;transition:transform .15s ease;
+}
+.back:active{transform:scale(.95)}
+.back svg{width:18px;height:18px}
+
+.hero{
+  background:var(--card);border:1px solid var(--line);border-radius:28px;
+  box-shadow:var(--sh); padding:26px;
+  display:flex; gap:26px; align-items:center;
+}
+.hero .art{width:190px;flex:none;aspect-ratio:1}
+.hero .art svg{width:100%;height:100%;display:block}
+.hero-txt{flex:1;min-width:0}
+.hero-txt h2{margin:0;font-size:34px;font-weight:500;letter-spacing:.01em;line-height:1.25}
+.hero-txt .py{color:var(--ink3);font-size:15px;letter-spacing:.06em;margin-bottom:12px}
+.hero-txt .lead{
+  font-size:19px;line-height:1.7;color:#453F38;
+  border-left:3px solid var(--accent);padding-left:15px;
+}
+
+.sec-title{
+  display:flex;align-items:center;gap:9px;
+  font-size:16px;font-weight:500;margin:26px 0 12px;color:#5C554C;
+}
+.sec-title::before{content:'';width:5px;height:17px;border-radius:3px;background:var(--accent);flex:none}
+
+.facts{display:flex;flex-direction:column;gap:11px}
+.fact{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  padding:16px 18px;display:flex;gap:14px;align-items:flex-start;
+  box-shadow:var(--sh);
+}
+.fact .no{
+  width:27px;height:27px;border-radius:9px;flex:none;
+  background:#FFF1E8;color:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:500;margin-top:1px;
+}
+.fact p{margin:0;font-size:16.5px;line-height:1.65}
+
+.actions{display:flex;gap:13px;margin-top:26px;flex-wrap:wrap}
+.btn{
+  flex:1;min-width:150px;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:17px 22px;border-radius:18px;
+  font-size:17px;font-weight:500;
+  transition:transform .15s ease,opacity .15s ease;
+}
+.btn:active{transform:scale(.97)}
+.btn svg{width:21px;height:21px;flex:none}
+.btn-main{background:var(--accent);color:#fff;box-shadow:0 4px 16px rgba(232,115,74,.28)}
+.btn-ghost{background:var(--card);border:1px solid var(--line-2);color:var(--ink)}
+.btn[disabled]{opacity:.45;pointer-events:none}
+
+/* ---------- 答题 ---------- */
+.overlay{
+  position:fixed;inset:0;z-index:60;
+  background:rgba(45,42,38,.42);
+  -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  animation:fade .2s ease;
+}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.sheet{
+  background:var(--bg);border-radius:28px;width:100%;max-width:540px;
+  padding:26px;box-shadow:0 20px 60px rgba(45,42,38,.22);
+  animation:pop .28s cubic-bezier(.2,1.1,.4,1);
+  max-height:calc(100vh - 40px);overflow-y:auto;
+}
+@keyframes pop{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+.qhead{display:flex;align-items:center;gap:11px;margin-bottom:16px}
+.qtag{
+  background:#FFF1E8;color:var(--accent);border-radius:9px;
+  padding:5px 11px;font-size:13px;font-weight:500;flex:none;
+}
+.qhead h3{margin:0;font-size:18px;font-weight:500;line-height:1.5}
+.opts{display:flex;flex-direction:column;gap:11px;margin-top:20px}
+.opt{
+  display:flex;align-items:center;gap:14px;
+  background:var(--card);border:1.5px solid var(--line-2);border-radius:18px;
+  padding:17px 19px;font-size:17px;text-align:left;
+  transition:transform .15s ease,border-color .18s ease,background .18s ease;
+  width:100%;
+}
+.opt:active{transform:scale(.985)}
+.opt .key{
+  width:32px;height:32px;border-radius:11px;flex:none;
+  background:#F5F0E8;color:#8A8178;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:500;transition:all .18s ease;
+}
+.opt.right{border-color:var(--ok);background:#F1FAF4}
+.opt.right .key{background:var(--ok);color:#fff}
+.opt.wrong{border-color:var(--no);background:#FDF2F0}
+.opt.wrong .key{background:var(--no);color:#fff}
+.opt.locked{pointer-events:none}
+.opt.dim{opacity:.5}
+
+.verdict{
+  margin-top:18px;border-radius:18px;padding:17px 19px;
+  font-size:16.5px;line-height:1.65;display:none;
+  animation:fade .25s ease;
+}
+.verdict.show{display:block}
+.verdict.good{background:#F1FAF4;border:1px solid #BFE5CD;color:#22663E}
+.verdict.bad{background:#FDF2F0;border:1px solid #F2CEC7;color:#8E3A2C}
+.verdict strong{font-weight:500}
+
+/* ---------- 工具 ---------- */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.toast{
+  position:fixed;left:50%;bottom:calc(34px + env(safe-area-inset-bottom));
+  transform:translateX(-50%) translateY(20px);
+  background:#2D2A26;color:#fff;padding:13px 22px;border-radius:14px;
+  font-size:15px;z-index:90;opacity:0;pointer-events:none;
+  transition:opacity .25s ease,transform .25s cubic-bezier(.2,1,.4,1);
+  max-width:90vw;text-align:center;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ---------- 响应式 ---------- */
+@media (max-width:760px){
+  .hero{flex-direction:column;gap:18px;padding:22px}
+  .hero .art{width:150px}
+  .hero-txt h2{font-size:28px}
+  .hero-txt .lead{font-size:17.5px}
+  .intro h1{font-size:23px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:13px}
+  .card .nm{font-size:17px}
+  .actions .btn{min-width:0}
+}
+@media (max-width:420px){
+  .grid{grid-template-columns:repeat(2,1fr);gap:12px}
+  .wrap{padding:0 15px}
+  header{padding-left:15px;padding-right:15px}
+  .hero-txt h2{font-size:25px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<h2 class="sr-only">小小百科——给 3 到 9 岁孩子的动物认知应用，包含插画、知识卡、语音朗读与互动答题。</h2>
+
+<header>
+  <div class="brand"><span class="brand-dot"></span><span>小小百科</span></div>
+  <div class="spacer"></div>
+  <div class="stars" id="stars" title="已认识的动物">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l2.6 5.9 6.4.6-4.8 4.3 1.4 6.2L12 16.8 6.4 20l1.4-6.2L3 9.5l6.4-.6z" fill="#E8A33D"/></svg>
+    <span id="starsTxt">0 / 8</span>
+  </div>
+</header>
+
+<main id="app"></main>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   内容层 —— 想换成恐龙 / 交通工具 / 数学，只改这个数组
+   每项：id, name, pinyin, art(SVG), lead(一句话), facts(3条), quiz
+   ========================================================= */
+const DATA = [
+  {
+    id:'elephant', name:'大象', pinyin:'dà xiàng', hue:'#A9B6C6',
+    art:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#E8EDF2"/><ellipse cx="48" cy="92" rx="25" ry="33" fill="#93A0B2"/><ellipse cx="152" cy="92" rx="25" ry="33" fill="#93A0B2"/><circle cx="100" cy="88" r="50" fill="#B6C2D0"/><path d="M100 134 v30 q0 12 -9 15" stroke="#B6C2D0" stroke-width="20" fill="none" stroke-linecap="round"/><path d="M80 138 q-6 16 2 26" stroke="#FBF8F3" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M120 138 q6 16 -2 26" stroke="#FBF8F3" stroke-width="7" fill="none" stroke-linecap="round"/><circle cx="80" cy="78" r="5.5" fill="#2D2A26"/><circle cx="120" cy="78" r="5.5" fill="#2D2A26"/></svg>`,
+    lead:'大象是陆地上最大的动物，一头非洲象能长到 4 米高、重 7 吨，相当于 4 辆小汽车。',
+    facts:[
+      '大象的鼻子里有 4 万多块肌肉，能捡起一颗小花生，也能推倒一棵树。',
+      '大象用脚掌感知远处传来的震动，能"听"到 10 公里外同伴的脚步声。',
+      '大象每天要吃下 200 公斤植物，却只睡 2 到 3 个小时。'
+    ],
+    quiz:{ q:'大象的鼻子里大约有多少块肌肉？', opts:['40 块','4000 块','4 万块'], a:2,
+      why:'是 4 万多块。人的全身肌肉加起来也只有 600 多块，所以大象的鼻子能又灵活又有力。' }
+  },
+  {
+    id:'giraffe', name:'长颈鹿', pinyin:'cháng jǐng lù', hue:'#EFBC66',
+    art:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#FBF0DC"/><rect x="102" y="128" width="17" height="50" rx="8" fill="#E0A94F"/><rect x="128" y="128" width="17" height="50" rx="8" fill="#E0A94F"/><rect x="152" y="130" width="16" height="48" rx="8" fill="#CF9940"/><rect x="86" y="130" width="16" height="48" rx="8" fill="#CF9940"/><ellipse cx="130" cy="118" rx="46" ry="32" fill="#EFBC66"/><path d="M104 106 L98 46" stroke="#EFBC66" stroke-width="27" stroke-linecap="round" fill="none"/><ellipse cx="98" cy="40" rx="26" ry="19" fill="#EFBC66"/><rect x="90" y="15" width="6" height="14" rx="3" fill="#CF9940"/><circle cx="93" cy="14" r="6" fill="#B5793A"/><rect x="110" y="15" width="6" height="14" rx="3" fill="#CF9940"/><circle cx="113" cy="14" r="6" fill="#B5793A"/><ellipse cx="123" cy="35" rx="11" ry="7" fill="#E0A94F" transform="rotate(-20 123 35)"/><circle cx="86" cy="38" r="4" fill="#2D2A26"/><ellipse cx="76" cy="47" rx="5" ry="4" fill="#C08A45"/><ellipse cx="128" cy="108" rx="8" ry="6" fill="#D9A24C"/><ellipse cx="148" cy="122" rx="9" ry="6.5" fill="#D9A24C"/><ellipse cx="116" cy="130" rx="7" ry="5" fill="#D9A24C"/><ellipse cx="106" cy="68" rx="6" ry="8" fill="#D9A24C"/><ellipse cx="104" cy="90" rx="6" ry="8" fill="#D9A24C"/></svg>`,
+    lead:'长颈鹿是陆地上最高的动物，光是脖子就有 2 米长，能吃到 6 米高处的树叶。',
+    facts:[
+      '长颈鹿的脖子里只有 7 块骨头，和我们人类一样多，只是每一块都特别长。',
+      '它每天只睡 20 分钟到 2 小时，而且是站着睡的。',
+      '它的舌头有 45 厘米长，是深紫色的，能卷住带刺的树叶而不被扎伤。'
+    ],
+    quiz:{ q:'长颈鹿的脖子里有多少块骨头？', opts:['7 块','70 块','200 块'], a:0,
+      why:'只有 7 块，和人的脖子一样多。骨头数量没变，只是每一块被拉得特别长。' }
+  },
+  {
+    id:'penguin', name:'企鹅', pinyin:'qǐ é', hue:'#2F3E50',
+    art:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#E4EEF5"/><ellipse cx="100" cy="118" rx="52" ry="60" fill="#2F3E50"/><ellipse cx="100" cy="126" rx="34" ry="46" fill="#FBF8F3"/><circle cx="100" cy="62" r="36" fill="#2F3E50"/><ellipse cx="100" cy="66" rx="26" ry="24" fill="#FBF8F3"/><circle cx="89" cy="62" r="5.5" fill="#2D2A26"/><circle cx="111" cy="62" r="5.5" fill="#2D2A26"/><path d="M100 70 l-9 8 l9 8 l9 -8 z" fill="#F0A03C"/><ellipse cx="52" cy="120" rx="14" ry="34" fill="#243141" transform="rotate(12 52 120)"/><ellipse cx="148" cy="120" rx="14" ry="34" fill="#243141" transform="rotate(-12 148 120)"/><ellipse cx="82" cy="174" rx="17" ry="9" fill="#F0A03C"/><ellipse cx="118" cy="174" rx="17" ry="9" fill="#F0A03C"/></svg>`,
+    lead:'帝企鹅能在零下 40 度的暴风雪里站一个多月，靠挤在一起取暖，轮流站到最里面。',
+    facts:[
+      '企鹅不会飞，但在水里游得比人快得多，时速能到 36 公里。',
+      '帝企鹅爸爸把蛋放在脚背上孵 2 个月，这期间一口东西都不吃。',
+      '企鹅的羽毛每平方厘米有 100 多根，比鸡的羽毛密 5 倍以上，所以不怕冷。'
+    ],
+    quiz:{ q:'帝企鹅爸爸孵蛋的时候，要多久不吃东西？', opts:['2 天','2 个月','2 年'], a:1,
+      why:'大约 2 个月。这期间它只靠身上储存的脂肪撑着，体重会掉掉将近一半。' }
+  },
+  {
+    id:'panda', name:'熊猫', pinyin:'xióng māo', hue:'#2D2A26',
+    art:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#EDF1EC"/><ellipse cx="100" cy="134" rx="50" ry="44" fill="#FBF8F3"/><ellipse cx="58" cy="128" rx="18" ry="26" fill="#2D2A26" transform="rotate(18 58 128)"/><ellipse cx="142" cy="128" rx="18" ry="26" fill="#2D2A26" transform="rotate(-18 142 128)"/><ellipse cx="74" cy="168" rx="19" ry="14" fill="#2D2A26"/><ellipse cx="126" cy="168" rx="19" ry="14" fill="#2D2A26"/><circle cx="62" cy="48" r="18" fill="#2D2A26"/><circle cx="138" cy="48" r="18" fill="#2D2A26"/><circle cx="100" cy="84" r="46" fill="#FBF8F3"/><ellipse cx="80" cy="82" rx="15" ry="18" fill="#2D2A26" transform="rotate(-18 80 82)"/><ellipse cx="120" cy="82" rx="15" ry="18" fill="#2D2A26" transform="rotate(18 120 82)"/><circle cx="80" cy="82" r="6" fill="#FBF8F3"/><circle cx="120" cy="82" r="6" fill="#FBF8F3"/><circle cx="80" cy="82" r="3" fill="#2D2A26"/><circle cx="120" cy="82" r="3" fill="#2D2A26"/><ellipse cx="100" cy="102" rx="7" ry="5" fill="#2D2A26"/><path d="M100 107 q-6 8 -12 3 M100 107 q6 8 12 3" stroke="#2D2A26" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>`,
+    lead:'大熊猫每天要花 12 个小时以上吃竹子，一天能吃掉 30 公斤，差不多是它体重的三分之一。',
+    facts:[
+      '刚出生的熊猫宝宝只有 100 克左右，比一个鸡蛋还轻，是妈妈体重的千分之一。',
+      '熊猫有 6 根手指，多出来的那根叫"伪拇指"，专门用来握紧竹子。',
+      '熊猫的咬合力比狮子还强，能轻松咬断手腕粗的竹子。'
+    ],
+    quiz:{ q:'刚出生的熊猫宝宝大约有多重？', opts:['100 克','1 公斤','5 公斤'], a:0,
+      why:'只有 100 克左右。熊猫妈妈有 100 公斤重，宝宝却比一个鸡蛋还轻，所以要特别小心地抱着。' }
+  },
+  {
+    id:'lion', name:'狮子', pinyin:'shī zi', hue:'#C97B3C',
+    art:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#FBEDD8"/><g fill="#C97B3C"><circle cx="100" cy="50" r="21"/><circle cx="135" cy="65" r="21"/><circle cx="150" cy="100" r="21"/><circle cx="135" cy="135" r="21"/><circle cx="100" cy="150" r="21"/><circle cx="65" cy="135" r="21"/><circle cx="50" cy="100" r="21"/><circle cx="65" cy="65" r="21"/></g><circle cx="100" cy="100" r="58" fill="#C97B3C"/><circle cx="100" cy="102" r="43" fill="#F0B45E"/><circle cx="70" cy="68" r="13" fill="#E0A24C"/><circle cx="130" cy="68" r="13" fill="#E0A24C"/><circle cx="84" cy="94" r="5" fill="#2D2A26"/><circle cx="116" cy="94" r="5" fill="#2D2A26"/><path d="M100 106 l-8 6 h16 z" fill="#8A5A2B"/><path d="M100 112 v7 M100 119 q-9 8 -17 0 M100 119 q9 8 17 0" stroke="#8A5A2B" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M74 112 h-13 M74 118 h-13 M126 112 h13 M126 118 h13" stroke="#C99A5E" stroke-width="2" stroke-linecap="round"/></svg>`,
+    lead:'狮子的吼声能传到 8 公里外，是猫科动物里嗓门最大的，一声吼整片草原都听得见。',
+    facts:[
+      '狮群里真正干活的是母狮，80% 以上的猎物都是它们抓回来的。',
+      '狮子每天要睡 20 个小时左右，白天大多在树荫下躺着。',
+      '狮群里的母狮通常从小一起长大，一辈子都不分开，互相帮着带孩子。'
+    ],
+    quiz:{ q:'狮群里负责捕猎的主力是谁？', opts:['公狮','母狮','小狮子'], a:1,
+      why:'是母狮，它们承担了 80% 以上的捕猎。公狮主要负责守卫领地。' }
+  },
+  {
+    id:'rabbit', name:'兔子', pinyin:'tù zi', hue:'#F2C4D2',
+    art:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#F6EEF2"/><ellipse cx="78" cy="46" rx="13" ry="38" fill="#FAF7F4" transform="rotate(-10 78 46)"/><ellipse cx="78" cy="48" rx="6" ry="26" fill="#F2C4D2" transform="rotate(-10 78 48)"/><ellipse cx="122" cy="46" rx="13" ry="38" fill="#FAF7F4" transform="rotate(10 122 46)"/><ellipse cx="122" cy="48" rx="6" ry="26" fill="#F2C4D2" transform="rotate(10 122 48)"/><circle cx="150" cy="156" r="15" fill="#FFFFFF"/><ellipse cx="100" cy="146" rx="46" ry="38" fill="#FAF7F4"/><circle cx="100" cy="104" r="40" fill="#FAF7F4"/><circle cx="86" cy="100" r="6" fill="#2D2A26"/><circle cx="114" cy="100" r="6" fill="#2D2A26"/><circle cx="88" cy="98" r="2" fill="#FFFFFF"/><circle cx="116" cy="98" r="2" fill="#FFFFFF"/><path d="M100 112 l-5 4 h10 z" fill="#E88BA5"/><path d="M100 116 v4 M100 120 q-7 6 -12 0 M100 120 q7 6 12 0" stroke="#C9A6B0" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M76 112 h-15 M76 118 h-15 M124 112 h15 M124 118 h15" stroke="#D8C6CC" stroke-width="2" stroke-linecap="round"/><ellipse cx="78" cy="178" rx="18" ry="10" fill="#FAF7F4"/><ellipse cx="122" cy="178" rx="18" ry="10" fill="#FAF7F4"/></svg>`,
+    lead:'兔子的眼睛长在脑袋两侧，几乎能看到 360 度的范围，不用转头就知道后面有没有危险。',
+    facts:[
+      '兔子的门牙一辈子都在长，每个月能长 1 厘米，所以要不停啃东西磨牙。',
+      '兔子特别高兴的时候会跳起来扭身子，这个动作有个专门的名字叫 binky。',
+      '兔子的耳朵能转动 270 度，像两个小雷达，能听清四面八方的声音。'
+    ],
+    quiz:{ q:'兔子的门牙会一直长吗？', opts:['会，一辈子都在长','不会，长到 1 岁就停','只换一次牙'], a:0,
+      why:'会一直长。所以兔子必须天天啃干草和木头来磨牙，不然牙齿会长得合不上嘴。' }
+  },
+  {
+    id:'owl', name:'猫头鹰', pinyin:'māo tóu yīng', hue:'#A5764E',
+    art:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#F0E8DA"/><path d="M58 68 l-8 -30 l26 14 z" fill="#A5764E"/><path d="M142 68 l8 -30 l-26 14 z" fill="#A5764E"/><ellipse cx="100" cy="122" rx="54" ry="58" fill="#A5764E"/><ellipse cx="100" cy="134" rx="36" ry="44" fill="#E8D5B8"/><ellipse cx="50" cy="126" rx="12" ry="30" fill="#8E6440" transform="rotate(10 50 126)"/><ellipse cx="150" cy="126" rx="12" ry="30" fill="#8E6440" transform="rotate(-10 150 126)"/><circle cx="78" cy="80" r="24" fill="#FBF8F3"/><circle cx="122" cy="80" r="24" fill="#FBF8F3"/><circle cx="78" cy="80" r="12" fill="#3B3229"/><circle cx="122" cy="80" r="12" fill="#3B3229"/><circle cx="82" cy="76" r="4" fill="#FFFFFF"/><circle cx="126" cy="76" r="4" fill="#FFFFFF"/><path d="M100 94 l-9 12 l9 10 l9 -10 z" fill="#F0A03C"/><path d="M86 176 v10 M86 186 h-9 M86 186 h9 M114 176 v10 M114 186 h-9 M114 186 h9" stroke="#E0A24C" stroke-width="5" stroke-linecap="round" fill="none"/></svg>`,
+    lead:'猫头鹰的脖子能转 270 度，因为它的眼球是管状的、根本不能动，只能靠转头看世界。',
+    facts:[
+      '猫头鹰的羽毛边缘是锯齿状的，飞起来几乎没有声音，老鼠听不到它靠近。',
+      '它的眼球不能转动，所以看东西必须整个头一起转，最多能转到 270 度。',
+      '一只猫头鹰一年能吃掉 1000 多只老鼠，是农田里最厉害的捕鼠能手。'
+    ],
+    quiz:{ q:'猫头鹰的脖子最多能转多少度？', opts:['90 度','180 度','270 度'], a:2,
+      why:'能转 270 度。因为它眼球不能动，只能靠转头，而且脖子里有特殊的血管结构保证转头时不断血。' }
+  },
+  {
+    id:'butterfly', name:'蝴蝶', pinyin:'hú dié', hue:'#8B7BD8',
+    art:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#F3EDFB"/><ellipse cx="62" cy="78" rx="36" ry="42" fill="#8B7BD8" transform="rotate(-18 62 78)"/><ellipse cx="138" cy="78" rx="36" ry="42" fill="#8B7BD8" transform="rotate(18 138 78)"/><ellipse cx="70" cy="136" rx="28" ry="32" fill="#B0A3E8" transform="rotate(16 70 136)"/><ellipse cx="130" cy="136" rx="28" ry="32" fill="#B0A3E8" transform="rotate(-16 130 136)"/><circle cx="58" cy="72" r="9" fill="#F0B45E"/><circle cx="142" cy="72" r="9" fill="#F0B45E"/><circle cx="70" cy="140" r="6" fill="#F5C9A0"/><circle cx="130" cy="140" r="6" fill="#F5C9A0"/><ellipse cx="100" cy="108" rx="9" ry="46" fill="#4A3F6B"/><circle cx="100" cy="58" r="13" fill="#4A3F6B"/><path d="M94 48 q-16 -18 -26 -14 M106 48 q16 -18 26 -14" stroke="#4A3F6B" stroke-width="3.5" fill="none" stroke-linecap="round"/><circle cx="67" cy="33" r="5" fill="#8B7BD8"/><circle cx="133" cy="33" r="5" fill="#8B7BD8"/><circle cx="95" cy="56" r="2.5" fill="#FFFFFF"/><circle cx="105" cy="56" r="2.5" fill="#FFFFFF"/></svg>`,
+    lead:'蝴蝶翅膀上那些闪亮的颜色，很多并不是色素，而是光在鳞片上的折射，角度一变颜色就变。',
+    facts:[
+      '蝴蝶是用脚来尝味道的，落在叶子上一站，就知道这片叶子能不能吃。',
+      '蝴蝶的翅膀每秒能扇 5 到 12 次，看起来慢悠悠的，其实一点也不慢。',
+      '一只雌蝶能产 100 到 500 个卵，但最后能长成蝴蝶的通常只有一两只。'
+    ],
+    quiz:{ q:'蝴蝶是用身体的哪个部位尝味道的？', opts:['触角','脚','翅膀'], a:1,
+      why:'是用脚。蝴蝶的脚上有味觉感受器，落在叶子上站一站就知道能不能吃、能不能产卵。' }
+  }
+];
+
+const ICON = {
+  back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
+  sound:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7"/><path d="M18.5 5.5a9 9 0 010 13"/></svg>',
+  quiz:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>',
+  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-7 9 7v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>'
+};
+
+const KEY = 'kids-encyclopedia-progress-v1';
+let learned = {};
+try { learned = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch(e){ learned = {}; }
+let view = 'home', cur = null;
+
+const app = document.getElementById('app');
+const toastEl = document.getElementById('toast');
+let toastTimer = null;
+
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>toastEl.classList.remove('show'), 2200);
+}
+
+function countLearned(){
+  return DATA.filter(d => learned[d.id]).length;
+}
+
+function updateStars(){
+  document.getElementById('starsTxt').textContent = countLearned() + ' / ' + DATA.length;
+}
+
+/* ---------- 语音 ---------- */
+let voice = null;
+function pickVoice(){
+  if(!('speechSynthesis' in window)) return;
+  const vs = speechSynthesis.getVoices();
+  if(!vs.length) return;
+  voice = vs.find(v => /zh[-_]CN/i.test(v.lang))
+       || vs.find(v => /^zh/i.test(v.lang))
+       || null;
+}
+if('speechSynthesis' in window){
+  pickVoice();
+  speechSynthesis.onvoiceschanged = pickVoice;
+}
+function speak(text){
+  if(!('speechSynthesis' in window)){ toast('这台设备不支持语音朗读'); return; }
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'zh-CN';
+    u.rate = 0.86;
+    u.pitch = 1.06;
+    if(voice) u.voice = voice;
+    speechSynthesis.speak(u);
+  }catch(e){ toast('语音朗读启动失败'); }
+}
+
+/* ---------- 首页 ---------- */
+function renderHome(){
+  view = 'home'; cur = null;
+  const n = countLearned();
+  app.innerHTML = `
+    <div class="wrap">
+      <div class="intro">
+        <h1>${n === 0 ? '今天想认识谁？' : (n >= DATA.length ? '全部认识啦！' : '已经认识 ' + n + ' 个啦')}</h1>
+        <p>点开一个，看一看、听一听，最后回答一个小问题。</p>
+      </div>
+      <div class="grid">
+        ${DATA.map(d => `
+          <button class="card ${learned[d.id] ? 'done' : ''}" data-go="${d.id}" aria-label="${d.name}">
+            <span class="badge">✓</span>
+            <span class="art">${d.art}</span>
+            <span class="nm">${d.name}</span>
+            <span class="py">${d.pinyin}</span>
+          </button>
+        `).join('')}
+      </div>
+    </div>`;
+  window.scrollTo({top:0, behavior:'instant'});
+}
+
+/* ---------- 详情页 ---------- */
+function renderDetail(id){
+  const d = DATA.find(x => x.id === id);
+  if(!d) return renderHome();
+  view = 'detail'; cur = d;
+  app.innerHTML = `
+    <div class="wrap detail">
+      <button class="back" data-home>${ICON.back}<span>返回</span></button>
+      <div class="hero">
+        <div class="art">${d.art}</div>
+        <div class="hero-txt">
+          <h2>${d.name}</h2>
+          <div class="py">${d.pinyin}</div>
+          <div class="lead">${d.lead}</div>
+        </div>
+      </div>
+      <div class="sec-title">你可能还不知道</div>
+      <div class="facts">
+        ${d.facts.map((f,i) => `
+          <div class="fact"><div class="no">${i+1}</div><p>${f}</p></div>
+        `).join('')}
+      </div>
+      <div class="actions">
+        <button class="btn btn-ghost" data-speak>${ICON.sound}<span>听一听</span></button>
+        <button class="btn btn-main" data-quiz>${ICON.quiz}<span>考一考</span></button>
+      </div>
+    </div>`;
+  window.scrollTo({top:0, behavior:'instant'});
+}
+
+/* ---------- 答题 ---------- */
+function openQuiz(id){
+  const d = DATA.find(x => x.id === id);
+  if(!d) return;
+  const q = d.quiz;
+  const sheet = document.createElement('div');
+  sheet.className = 'overlay';
+  sheet.innerHTML = `
+    <div class="sheet" role="dialog" aria-modal="true">
+      <div class="qhead">
+        <span class="qtag">考一考</span>
+        <h3>${q.q}</h3>
+      </div>
+      <div class="opts">
+        ${q.opts.map((o,i) => `
+          <button class="opt" data-opt="${i}">
+            <span class="key">${'ABC'[i]}</span><span>${o}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="verdict" id="verdict"></div>
+      <div class="actions" id="qacts" style="display:none">
+        <button class="btn btn-ghost" data-close>再想想</button>
+        <button class="btn btn-main" data-home>回到首页</button>
+      </div>
+    </div>`;
+  document.body.appendChild(sheet);
+
+  const opts = [...sheet.querySelectorAll('.opt')];
+  const verdict = sheet.querySelector('#verdict');
+  const qacts = sheet.querySelector('#qacts');
+  let answered = false;
+
+  opts.forEach(btn => btn.addEventListener('click', () => {
+    if(answered) return;
+    answered = true;
+    const pick = +btn.dataset.opt;
+    const ok = pick === q.a;
+    opts.forEach((b,i) => {
+      b.classList.add('locked');
+      if(i === q.a) b.classList.add('right');
+      else if(i === pick) b.classList.add('wrong');
+      else b.classList.add('dim');
+    });
+    verdict.className = 'verdict show ' + (ok ? 'good' : 'bad');
+    verdict.innerHTML = ok
+      ? `<strong>答对了。</strong>${q.why}`
+      : `<strong>差一点点。</strong>正确答案是「${q.opts[q.a]}」。${q.why}`;
+    qacts.style.display = 'flex';
+    if(ok && !learned[d.id]){
+      learned[d.id] = true;
+      try{ localStorage.setItem(KEY, JSON.stringify(learned)); }catch(e){}
+      updateStars();
+    }
+    if(ok) speak('答对了。' + q.why);
+  }));
+
+  sheet.addEventListener('click', e => {
+    if(e.target === sheet || e.target.closest('[data-close]')){
+      sheet.remove();
+      if('speechSynthesis' in window) speechSynthesis.cancel();
+    }
+    if(e.target.closest('[data-home]')){
+      sheet.remove();
+      if('speechSynthesis' in window) speechSynthesis.cancel();
+      nav('#/', renderHome);
+    }
+  });
+}
+
+/* ---------- 路由（让平板返回键可用） ---------- */
+function nav(hash, fn){
+  if(location.hash === hash) fn();
+  else location.hash = hash;
+}
+function route(){
+  const m = location.hash.match(/^#\/e\/([a-z]+)$/);
+  if(m && DATA.some(x => x.id === m[1])) renderDetail(m[1]);
+  else renderHome();
+}
+window.addEventListener('hashchange', () => {
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+  route();
+});
+
+/* ---------- 事件委托 ---------- */
+app.addEventListener('click', e => {
+  const go = e.target.closest('[data-go]');
+  if(go){ const id = go.dataset.go; nav('#/e/' + id, () => renderDetail(id)); return; }
+  if(e.target.closest('[data-home]')){ nav('#/', renderHome); return; }
+  if(e.target.closest('[data-speak]')){
+    const d = cur; if(!d) return;
+    speak(d.name + '。' + d.lead + ' ' + d.facts.join(' '));
+    return;
+  }
+  if(e.target.closest('[data-quiz]')){ if(cur) openQuiz(cur.id); }
+});
+
+updateStars();
+route();
+
+/* ---------- PWA 离线 ---------- */
+if('serviceWorker' in navigator && location.protocol !== 'file:'){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>

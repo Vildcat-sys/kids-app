@@ -1,0 +1,142 @@
+{
+ "source": "launch",
+ "desc": "Launch Library 2 航天发射记录 —— 真实火箭型号与发射结果。用于「火箭」主题",
+ "fetchedAt": "2026-09-17T12:44:37.725Z",
+ "data": [
+  {
+   "name": "Kuaizhou 11 | SpaceTY-51 & 52",
+   "rocket": "Kuaizhou 11",
+   "provider": "ExPace",
+   "status": "Success",
+   "net": "2026-09-17T02:40:00Z",
+   "pad": "Launch Area 95A",
+   "country": "CHN"
+  },
+  {
+   "name": "Falcon 9 Block 5 | USSF-259",
+   "rocket": "Falcon 9 Block 5",
+   "provider": "SpaceX",
+   "status": "Success",
+   "net": "2026-09-17T01:07:56Z",
+   "pad": "Space Launch Complex 4E",
+   "country": "USA"
+  },
+  {
+   "name": "Long March 12 | SatNet LEO Group 25",
+   "rocket": "Long March 12",
+   "provider": "China Aerospace Science and Technology Corporation",
+   "status": "Success",
+   "net": "2026-09-17T00:32:00Z",
+   "pad": "Commercial LC-2",
+   "country": "CHN"
+  },
+  {
+   "name": "Soyuz 2.1b | Progress MS-35 (96P)",
+   "rocket": "Soyuz 2.1b",
+   "provider": "Russian Federal Space Agency (ROSCOSMOS)",
+   "status": "Success",
+   "net": "2026-09-16T13:33:54Z",
+   "pad": "31/6",
+   "country": "KAZ"
+  },
+  {
+   "name": "Gravity-1 | SpaceSail Polar Group #16",
+   "rocket": "Gravity-1",
+   "provider": "Orienspace Technology",
+   "status": "Success",
+   "net": "2026-09-15T22:00:00Z",
+   "pad": "Yellow Sea (launch location 5)",
+   "country": "CHN"
+  },
+  {
+   "name": "Zhuque-2E Block 2 | SpaceSail Polar Group #15",
+   "rocket": "Zhuque-2E Block 2",
+   "provider": "LandSpace",
+   "status": "Success",
+   "net": "2026-09-15T06:26:00Z",
+   "pad": "Launch Area 96A",
+   "country": "CHN"
+  },
+  {
+   "name": "Vega-C | Sentinel-3C & FLEX",
+   "rocket": "Vega-C",
+   "provider": "Avio S.p.A",
+   "status": "Success",
+   "net": "2026-09-15T01:21:07Z",
+   "pad": "Ariane Launch Area 1 (ELV)",
+   "country": "GUF"
+  },
+  {
+   "name": "Falcon 9 Block 5 | O3b mPower 11-13",
+   "rocket": "Falcon 9 Block 5",
+   "provider": "SpaceX",
+   "status": "Success",
+   "net": "2026-09-13T18:49:00Z",
+   "pad": "Space Launch Complex 40",
+   "country": "USA"
+  },
+  {
+   "name": "Electron | Happily Ever Faster (BlackSky Gen-3 5)",
+   "rocket": "Electron",
+   "provider": "Rocket Lab",
+   "status": "Success",
+   "net": "2026-09-11T03:28:00Z",
+   "pad": "Rocket Lab Launch Complex 1A",
+   "country": "NZL"
+  },
+  {
+   "name": "Falcon 9 Block 5 | USSF-153",
+   "rocket": "Falcon 9 Block 5",
+   "provider": "SpaceX",
+   "status": "Success",
+   "net": "2026-09-10T15:42:30Z",
+   "pad": "Space Launch Complex 4E",
+   "country": "USA"
+  },
+  {
+   "name": "Long March 4B | Yaogan 53-01 to 03/56-01 to 03",
+   "rocket": "Long March 4B",
+   "provider": "China Aerospace Science and Technology Corporation",
+   "status": "Success",
+   "net": "2026-09-10T09:00:00Z",
+   "pad": "Launch Area 94 (SLS-2 / 603)",
+   "country": "CHN"
+  },
+  {
+   "name": "Falcon 9 Block 5 | Starlink Group 15-24",
+   "rocket": "Falcon 9 Block 5",
+   "provider": "SpaceX",
+   "status": "Success",
+   "net": "2026-09-06T14:26:54Z",
+   "pad": "Space Launch Complex 4E",
+   "country": "USA"
+  },
+  {
+   "name": "Spectrum | Onward and Upward",
+   "rocket": "Spectrum",
+   "provider": "Isar Aerospace",
+   "status": "Success",
+   "net": "2026-09-05T20:12:00Z",
+   "pad": "Orbital Launch Pad",
+   "country": "NOR"
+  },
+  {
+   "name": "GSLV Mk II | GISAT-1A (EOS-05)",
+   "rocket": "GSLV Mk. II",
+   "provider": "Indian Space Research Organization",
+   "status": "Success",
+   "net": "2026-09-03T21:25:00Z",
+   "pad": "Satish Dhawan Space Centre Second Launch Pad",
+   "country": "IND"
+  },
+  {
+   "name": "Electron | Owl Around The World (StriX Launch 11)",
+   "rocket": "Electron",
+   "provider": "Rocket Lab",
+   "status": "Success",
+   "net": "2026-09-02T12:01:00Z",
+   "pad": "Rocket Lab Launch Complex 1B",
+   "country": "NZL"
+  }
+ ]
+}

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>题型交互测试</title>
+<link rel="stylesheet" href="../src/styles.css">
+<style>
+  #stage { max-width: 860px; margin: 0 auto; padding: 16px; }
+  #testlog {
+    white-space: pre-wrap;
+    margin: 20px;
+    padding: 12px;
+    border-radius: 8px;
+    background: #f4f4f4;
+    font: 12px/1.65 ui-monospace, Consolas, monospace;
+  }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="testlog">running…</div>
+
+<script type="module">
+/*
+  测试策略说明
+  ─────────────────────────────────────────────────────────────
+  本测试**不使用 iframe，也不通过 hash 导航**。
+
+  原因：Chrome 无头模式加 --virtual-time-budget 时，hashchange 事件不会触发
+  （虚拟时间只快进定时器，不 flush 事件任务队列），导致 iframe 内页面永远停在
+  上一屏，所有 DOM 查询返回空。
+
+  改成直接 import 应用的模块、自己装配依赖、同步渲染到本页容器后，
+  全部操作都变成同步调用，不依赖任何事件循环机制，结果可复现。
+
+  这样做的额外好处：可以直接断言 store 的内部状态，而不只是看界面。
+*/
+
+import { createStore } from '../src/core/store.js';
+import { renderCard } from '../src/ui/card.js';
+import { openQuiz } from '../src/ui/quiz.js';
+import { findItem, totalItemCount } from '../src/data/index.js';
+
+const stage = document.getElementById('stage');
+const logEl = document.getElementById('testlog');
+let buf = '';
+const log = (m) => { buf += m + '\n'; logEl.textContent = buf; };
+
+/* 用静音替身，避免无头环境下的 TTS 报错干扰测试 */
+const speech = { supported: false, speak: () => false, stop: () => {} };
+const store = createStore();
+
+const q = (sel) => document.querySelector(sel);
+const qa = (sel) => Array.from(document.querySelectorAll(sel));
+const verdict = () => { const v = q('.verdict'); return v ? (v.className.replace('verdict', '').trim() || 'none') : 'MISSING'; };
+
+function clearOverlays() { qa('.overlay').forEach((o) => o.remove()); }
+
+function mount(itemId) {
+  clearOverlays();
+  const hit = findItem(itemId);
+  if (!hit) { log(`✗ 找不到知识点 ${itemId}`); return null; }
+  renderCard({
+    container: stage,
+    item: hit.item,
+    topic: hit.topic,
+    store,
+    speech,
+    go: () => {},
+    openQuiz: (it) => openQuiz({ item: it, store, speech, onHome: () => {}, onNext: () => {} }),
+  });
+  return hit;
+}
+
+const steps = [];
+
+/* ================= 1. 三选一 ================= */
+steps.push([() => {
+  mount('science-water-cycle');
+  q('[data-quiz]').click();
+  const opts = qa('.opt');
+  log(`1. choice（三选一）　选项数=${opts.length}`);
+  log(`   题目：${q('.qhead h3').textContent}`);
+  opts[1].click();                     // 正确答案下标 1（「雨」）
+}, 0]);
+
+steps.push([() => {
+  log(`   → verdict=${verdict()}　标对=${qa('.opt.right').length}　标错=${qa('.opt.wrong').length}　已掌握=${store.has('science-water-cycle')}`);
+  clearOverlays();
+}, 0]);
+
+/* ================= 2. 听音选词 ================= */
+steps.push([() => {
+  mount('english-colors');
+  q('[data-quiz]').click();
+  const opts = qa('.opt');
+  log(`2. listen（听音选词）　选项数=${opts.length}　喇叭按钮=${q('.listen-btn') ? '有' : '无'}`);
+  log(`   题目：${q('.qhead h3').textContent}`);
+  opts[0].click();                     // blue
+}, 0]);
+
+steps.push([() => {
+  log(`   → verdict=${verdict()}　已掌握=${store.has('english-colors')}`);
+  clearOverlays();
+}, 0]);
+
+/* ================= 3. 排序 ================= */
+let orderCards = [];
+const ORDER_SEQ = ['1 个', '3 个', '6 个', '10 个'];
+let orderIdx = 0;
+
+steps.push([() => {
+  mount('logic-compare');
+  q('[data-quiz]').click();
+  orderCards = qa('.order-card');
+  log(`3. order（排序）　卡片数=${orderCards.length}`);
+  log(`   打乱后顺序：${orderCards.map((c) => c.querySelector('.order-txt').textContent.trim()).join(' / ')}`);
+  orderIdx = 0;
+}, 0]);
+
+ORDER_SEQ.forEach(() => {
+  steps.push([() => {
+    const val = ORDER_SEQ[orderIdx++];
+    const card = orderCards.find((c) => c.querySelector('.order-txt').textContent.trim() === val);
+    if (card) card.click(); else log(`   ✗ 找不到排序卡片「${val}」`);
+  }, 0]);
+});
+
+steps.push([() => {}, 600]);           // 排序题判定有 320ms 延迟，等它
+
+steps.push([() => {
+  log(`   按正确顺序点完 → verdict=${verdict()}　已掌握=${store.has('logic-compare')}`);
+  clearOverlays();
+}, 0]);
+
+/* ================= 4. 配对（先故意配错一次） ================= */
+let matchL = [], matchR = [], pendingRight = null;
+const MATCH_PAIRS = [['正方形', '4 条'], ['长方形', '2 条'], ['等边三角形', '3 条'], ['圆', '无数条']];
+
+steps.push([() => {
+  mount('space-symmetry');
+  q('[data-quiz]').click();
+  const cols = qa('.match-col');
+  matchL = Array.from(cols[0].querySelectorAll('.match-item'));
+  matchR = Array.from(cols[1].querySelectorAll('.match-item'));
+  log(`4. match（配对）　左列=${matchL.length}　右列=${matchR.length}`);
+  log(`   左列：${matchL.map((e) => e.textContent).join(' / ')}`);
+  log(`   右列：${matchR.map((e) => e.textContent).join(' / ')}`);
+  // 故意配错：正方形 ↔ 无数条
+  matchL.find((e) => e.textContent === '正方形').click();
+  matchR.find((e) => e.textContent === '无数条').click();
+}, 0]);
+
+steps.push([() => {
+  log(`   故意配错后：bad=${qa('.match-item.bad').length}　done=${qa('.match-item.done').length}`);
+}, 600]);
+
+MATCH_PAIRS.forEach(([l, r]) => {
+  steps.push([() => {
+    const le = matchL.find((e) => e.textContent === l);
+    const re = matchR.find((e) => e.textContent === r);
+    if (le && re && !le.classList.contains('done')) { le.click(); pendingRight = re; }
+    else { log(`   ✗ 配对项异常：${l} / ${r}`); pendingRight = null; }
+  }, 0]);
+  steps.push([() => { if (pendingRight) { pendingRight.click(); pendingRight = null; } }, 0]);
+});
+
+steps.push([() => {}, 900]);           // 配对结算有 520ms 延迟
+
+steps.push([() => {
+  log(`   全部配对完成 → verdict=${verdict()}　done=${qa('.match-item.done').length}　已掌握=${store.has('space-symmetry')}`);
+  clearOverlays();
+}, 0]);
+
+/* ================= 5. 汇总 ================= */
+steps.push([() => {
+  const s = store.stats();
+  // 总数从数据层读，不要硬编码 —— 之前写死 18，内容扩到 39 后这行就在骗人
+  const TOTAL = totalItemCount();
+  log(`5. 汇总：已掌握 ${s.learnedCount} / ${TOTAL}　作答 ${s.attempts} 次　答对 ${s.correct} 次　正确率 ${s.accuracy}%`);
+  log(`   配对题故意错过一次，所以未计入「已掌握」：${store.has('space-symmetry') === false ? '符合预期 ✓' : '不符合预期 ✗'}`);
+  log(`   其余三题均已掌握：${['science-water-cycle', 'english-colors', 'logic-compare'].every((id) => store.has(id)) ? '符合预期 ✓' : '不符合预期 ✗'}`);
+  log('--- 全部完成 ---');
+}, 0]);
+
+/* 执行链：纯 setTimeout，不用 async/await */
+let idx = 0;
+function next() {
+  if (idx >= steps.length) return;
+  const [fn, wait] = steps[idx++];
+  try { fn(); } catch (err) { log(`EXCEPTION: ${err && err.message ? err.message : err}`); }
+  setTimeout(next, wait || 0);
+}
+
+window.addEventListener('error', (e) => log(`ERROR: ${e.message || e}`));
+
+next();
+</script>
+</body>
+</html>

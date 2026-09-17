@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>art-gallery</title>
+<style>
+  /* 关掉全部动画：--virtual-time-budget 不推进 CSS 动画时钟，
+     不关的话入场动画会永远停在 opacity:0，截出来一片空白 */
+  * { animation: none !important; transition: none !important; }
+  body { margin: 0; padding: 14px; background: #FFFBF5; font-family: system-ui, -apple-system, sans-serif; }
+  .grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 10px; }
+  .cell { background: #fff; border-radius: 12px; padding: 6px; box-shadow: 0 1px 3px rgba(0,0,0,.07); }
+  .cell svg { width: 100%; height: auto; display: block; }
+  .cap { font-size: 9px; color: #7A7068; margin-top: 3px; text-align: center; word-break: break-all; line-height: 1.2; }
+</style>
+</head>
+<body>
+<div class="grid" id="g"></div>
+<script type="module">
+import { ART, listArtKeys } from '../src/art/index.js';
+
+const keys = listArtKeys();
+const g = document.getElementById('g');
+for (const k of keys) {
+  const d = document.createElement('div');
+  d.className = 'cell';
+  d.innerHTML = ART[k] + '<div class="cap">' + k + '</div>';
+  g.appendChild(d);
+}
+document.title = 'art-' + keys.length;
+document.body.setAttribute('data-count', String(keys.length));
+</script>
+</body>
+</html>

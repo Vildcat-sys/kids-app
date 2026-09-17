@@ -1,0 +1,12 @@
+{
+  "appId": "com.xiaoxiaobaike.app",
+  "appName": "小小百科",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": false,
+    "backgroundColor": "#FFFBF5"
+  }
+}

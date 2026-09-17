@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>题型渲染截图</title>
+<link rel="stylesheet" href="../src/styles.css">
+<style>
+  #stage { max-width: 860px; margin: 0 auto; padding: 16px; }
+  /* 截图专用：无头 Chrome 的 --virtual-time-budget 不推进 CSS 动画时钟，
+     入场动画会永远停在 opacity:0 的关键帧上 —— 元素在 DOM 里存在、dump-dom 能查到，
+     但截图里看不见。这里直接关掉动画让静态终态参与渲染。生产 CSS 不动。 */
+  * { animation: none !important; transition: none !important; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+
+<script type="module">
+/* 只为截图：直接 import 应用模块、同步渲染，不走 hash 导航、不用 iframe */
+import { createStore } from '../src/core/store.js';
+import { renderCard } from '../src/ui/card.js';
+import { openQuiz } from '../src/ui/quiz.js';
+import { findItem } from '../src/data/index.js';
+
+const itemId = new URLSearchParams(location.search).get('item') || 'english-colors';
+const pick = new URLSearchParams(location.search).get('pick');   // 需要预先点中的左列项
+
+const stage = document.getElementById('stage');
+const speech = { supported: false, speak: () => false, stop: () => {} };
+const store = createStore();
+
+const hit = findItem(itemId);
+renderCard({
+  container: stage, item: hit.item, topic: hit.topic, store, speech,
+  go: () => {},
+  openQuiz: (it) => openQuiz({ item: it, store, speech, onHome: () => {}, onNext: () => {} }),
+});
+document.querySelector('[data-quiz]').click();
+
+if (pick) {
+  const cols = document.querySelectorAll('.match-col');
+  const left = Array.from(cols[0].querySelectorAll('.match-item'));
+  const sel = left.find((e) => e.textContent.trim() === pick);
+  if (sel) sel.click();
+}
+
+document.title = 'ready';
+</script>
+</body>
+</html>

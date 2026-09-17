@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>shot-live</title>
+<link rel="stylesheet" href="../src/styles.css">
+<style>
+  /* --virtual-time-budget 不推进 CSS 动画时钟，不关掉入场动画会永远停在 opacity:0 */
+  * { animation: none !important; transition: none !important; }
+</style>
+</head>
+<body>
+<script>
+  // 普通脚本先于 module 执行，先把真实 localStorage 清干净，
+  // 保证 main.js 启动时读到的是「全新安装」状态。
+  // 无头浏览器每次跑用独立 profile，清掉也不影响任何真实数据。
+  localStorage.clear();
+</script>
+
+<script type="module">
+/* 这一页不是渲染 mock，而是**真的把 main.js 跑起来**，
+   然后模拟一次点击 —— 目的是验证那条 preview 页测不到的链路：
+
+     prefs.setAgeBand → emit → main.js 的订阅回调
+       → updateStats()（顶栏分母变）
+       → router.go(当前 hash) → dispatch → onChange → 重新 render
+
+   全链路都是同步的，所以不需要等 setTimeout（virtual-time-budget 也推不动它）。 */
+import '../src/main.js';
+
+const read = () => {
+  const active = document.querySelector('.age-chip.on');
+  return {
+    stats: document.querySelector('.stars-txt')?.textContent ?? null,
+    cards: document.querySelectorAll('.topic-card').length,
+    active: active ? active.textContent : null,
+    asked: !!document.querySelector('.age-bar-ask'),
+  };
+};
+
+const before = read();
+
+// 模拟「家长点了 3-5 岁」
+const young = [...document.querySelectorAll('.age-chip')].find((b) => b.textContent === '3-5 岁');
+young?.click();
+const afterYoung = read();
+
+// 再点「6-8 岁」，确认能来回切
+const old = [...document.querySelectorAll('.age-chip')].find((b) => b.textContent === '6-8 岁');
+old?.click();
+const afterOld = read();
+
+// 最后点「全部」
+const all = [...document.querySelectorAll('.age-chip')].find((b) => b.textContent === '全部');
+all?.click();
+const afterAll = read();
+
+/* 注意：这里**不要**用 location.hash 去跳领域页。
+   --virtual-time-budget 不 flush 事件队列，hashchange 根本不会触发，
+   只会拿到一份没变化的 DOM 而误以为通过。领域页的档位过滤
+   由 shot-topic.html 单独验证。 */
+
+document.body.setAttribute(
+  'data-result',
+  JSON.stringify({ before, afterYoung, afterOld, afterAll })
+);
+</script>
+</body>
+</html>
