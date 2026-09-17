@@ -11,7 +11,7 @@
 
 // v6：复习主动化（首页入口显示温习数）+ 岛屿地形装饰（terrain）。
 // 内容结构变了，旧缓存里没有这些 UI 与 CSS，不升版会按旧版渲染。
-const CACHE = 'kids-encyclopedia-v6';
+const CACHE = 'kids-encyclopedia-v7';
 
 const ASSETS = [
   './',

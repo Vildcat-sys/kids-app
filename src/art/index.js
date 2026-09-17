@@ -243,6 +243,77 @@ export const ART = {
 
   // 时间词：太阳 + 月亮 + 时钟
   'english-time': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#EAF4FB"/><circle cx="58" cy="62" r="18" fill="#F5C542"/><path d="M58 32 v-6 M58 92 v6 M28 62 h-6 M88 62 h6 M37 41 l-5 -5 M79 41 l5 -5 M37 83 l-5 5 M79 83 l5 5" stroke="#F5C542" stroke-width="4" stroke-linecap="round"/><circle cx="146" cy="62" r="20" fill="#3D5A80"/><circle cx="155" cy="55" r="17" fill="#EAF4FB"/><circle cx="100" cy="138" r="28" fill="#FFFFFF" stroke="#5AA9E6" stroke-width="4"/><path d="M100 138 V119 M100 138 L115 146" stroke="#2F7BAF" stroke-width="4" stroke-linecap="round"/></svg>`,
+
+  /* ============ 内容扩充（2026-09-17 第二批 · +23） ============ */
+
+  // 雪：六角雪花
+  'science-snow': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#EAF3FB"/><g stroke="#7FB8E0" stroke-width="6" stroke-linecap="round"><path d="M100 50 V150"/><path d="M60 75 L140 125"/><path d="M140 75 L60 125"/></g><circle cx="100" cy="100" r="8" fill="#7FB8E0"/><g stroke="#A9D3EE" stroke-width="4" stroke-linecap="round"><path d="M100 50 l-9 -9 M100 50 l9 -9"/><path d="M100 150 l-9 9 M100 150 l9 9"/><path d="M60 75 l-12 -3 M60 75 l-3 -12"/><path d="M140 125 l12 3 M140 125 l3 12"/><path d="M140 75 l12 -3 M140 75 l3 -12"/><path d="M60 125 l-12 3 M60 125 l-3 12"/></g></svg>`,
+
+  // 风：三层风的曲线 + 飘叶
+  'science-wind': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#EAF3F8"/><path d="M28 76 q44 -22 88 0 t56 0" stroke="#6FB3DE" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M28 102 q52 -16 96 2 t52 -2" stroke="#9CCBE8" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M34 130 q44 -14 84 2 t60 -2" stroke="#BBCDE8" stroke-width="7" fill="none" stroke-linecap="round"/><ellipse cx="150" cy="58" rx="13" ry="7" fill="#6BAF6B" transform="rotate(-25 150 58)"/></svg>`,
+
+  // 星星：夜空中的一颗黄星 + 小星点
+  'science-star': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#26304A"/><path d="M100 44 l13 34 36 2 -28 22 11 35 -32 -21 -32 21 11 -35 -28 -22 36 -2 z" fill="#F5C542"/><circle cx="58" cy="64" r="3" fill="#FFFFFF"/><circle cx="150" cy="72" r="2.5" fill="#FFFFFF"/><circle cx="64" cy="146" r="2.5" fill="#FFFFFF"/><circle cx="146" cy="150" r="3" fill="#FFFFFF"/></svg>`,
+
+  // 树：树干 + 树冠
+  'science-tree': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#EDF6EE"/><rect x="92" y="112" width="16" height="48" rx="6" fill="#A87B4A"/><circle cx="100" cy="84" r="40" fill="#6BAF6B"/><circle cx="72" cy="100" r="24" fill="#5A9E5A"/><circle cx="128" cy="100" r="24" fill="#5A9E5A"/><circle cx="100" cy="78" r="20" fill="#7CC07C"/></svg>`,
+
+  // 岛屿：水中一块绿地 + 小棕榈（不使用任何地图轮廓）
+  'geo-island': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#DCEFF6"/><path d="M18 134 q44 -26 80 -10 q40 18 84 -2 v34 h-164 z" fill="#6FBF86"/><rect x="92" y="92" width="7" height="36" fill="#A87B4A"/><path d="M95 92 q-18 -6 -28 -18 q18 2 28 18 z" fill="#5A9E5A"/><path d="M95 92 q18 -6 28 -18 q-18 2 -28 18 z" fill="#5A9E5A"/><path d="M18 128 q44 -22 80 -8 q40 16 84 -2 v6 h-164 z" fill="#5AA9C9" opacity="0.55"/></svg>`,
+
+  // 草原：起伏绿丘 + 太阳
+  'geo-grassland': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#EFF6E8"/><circle cx="150" cy="56" r="18" fill="#F5C542"/><path d="M12 140 q44 -34 84 -10 q40 24 92 -6 v36 h-188 z" fill="#8FC97A"/><path d="M12 152 q44 -22 84 -4 q40 18 92 -4 v28 h-188 z" fill="#6FB05C"/><path d="M60 138 v-16 M64 138 v-20 M100 142 v-14 M104 142 v-18" stroke="#4E8F45" stroke-width="3" stroke-linecap="round"/></svg>`,
+
+  // 地震：裂开的地块
+  'geo-earthquake': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#F3EEE4"/><path d="M16 118 h74 l6 -16 8 18 6 -22 8 20 h64 v62 h-166 z" fill="#C9A36B"/><path d="M90 118 l8 -30 6 18 8 -22 6 22" stroke="#7A4F22" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+
+  // 冰川：两座蓝冰山
+  'geo-glacier': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#E8F4F8"/><path d="M34 162 V82 l26 -34 26 34 V162 z" fill="#9CD3E8"/><path d="M104 162 V62 l28 -32 28 32 V162 z" fill="#B6E0F0"/><path d="M60 96 l26 -32 M132 76 l28 -32" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/><path d="M34 130 h156" stroke="#CDEBF5" stroke-width="3"/></svg>`,
+
+  // 火车：车头 + 车窗 + 轮子
+  'culture-train': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#F2EEF8"/><rect x="40" y="76" width="120" height="66" rx="14" fill="#E8734A"/><rect x="54" y="90" width="34" height="30" rx="6" fill="#BFE0F0"/><rect x="112" y="90" width="34" height="30" rx="6" fill="#BFE0F0"/><rect x="80" y="92" width="14" height="26" rx="4" fill="#C9542E"/><circle cx="64" cy="150" r="9" fill="#3A3A3A"/><circle cx="136" cy="150" r="9" fill="#3A3A3A"/></svg>`,
+
+  // 望远镜：斜筒 + 三脚架
+  'culture-telescope': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#EEF2FA"/><rect x="80" y="40" width="20" height="74" rx="9" fill="#5A96D6" transform="rotate(26 90 77)"/><circle cx="116" cy="50" r="12" fill="#BFE0F0"/><path d="M90 114 L66 158 M90 114 L114 158 M90 114 V152" stroke="#8A9AA8" stroke-width="7" stroke-linecap="round"/></svg>`,
+
+  // 印刷术：印着「印」的字块 + 活字
+  'culture-printing': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#F5F0E4"/><rect x="46" y="48" width="66" height="86" rx="4" fill="#FFFFFF" stroke="#C9A36B" stroke-width="3"/><text x="79" y="110" font-size="50" font-weight="700" fill="#3A3A3A" text-anchor="middle" font-family="serif">印</text><rect x="124" y="116" width="22" height="22" rx="3" fill="#A87B4A"/><rect x="124" y="142" width="22" height="22" rx="3" fill="#8A5A2B"/><rect x="124" y="90" width="22" height="22" rx="3" fill="#C9A36B"/></svg>`,
+
+  // 蒸汽机：锅炉 + 烟囱冒汽
+  'culture-steam': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#F3EFE4"/><rect x="58" y="84" width="76" height="60" rx="12" fill="#C9542E"/><rect x="74" y="100" width="44" height="30" rx="5" fill="#F5C542"/><rect x="122" y="52" width="14" height="34" fill="#8A5A2B"/><path d="M126 52 q-10 -16 4 -28 q-8 -12 6 -22" stroke="#C9C2B4" stroke-width="6" fill="none" stroke-linecap="round"/></svg>`,
+
+  // 因果：云（因）→ 箭头 → 湿地（果）
+  'logic-cause': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#F2EEF8"/><ellipse cx="72" cy="76" rx="26" ry="15" fill="#9AA5B1"/><path d="M86 92 L120 110" stroke="#8B7BD8" stroke-width="5" stroke-linecap="round"/><path d="M120 110 l-9 -3 l3 -9" fill="#8B7BD8"/><path d="M92 148 q14 -10 28 0 t28 0" stroke="#6BAF6B" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="120" cy="124" r="4" fill="#6BAF6B"/></svg>`,
+
+  // 类比：两组对应块 + 双箭头
+  'logic-analogy': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#F2EEF8"/><rect x="34" y="58" width="40" height="40" rx="8" fill="#E8734A"/><rect x="34" y="112" width="40" height="40" rx="8" fill="#F0A03C"/><path d="M92 78 h12 M104 68 l10 10 l-10 10" stroke="#8B7BD8" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="126" y="58" width="40" height="40" rx="8" fill="#5AA9E6"/><rect x="126" y="112" width="40" height="40" rx="8" fill="#6BAF6B"/></svg>`,
+
+  // 数物对应：数字 5 + 5 个计数点
+  'logic-cardinal': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#F2EEF8"/><text x="100" y="124" font-size="62" font-weight="700" fill="#8B7BD8" text-anchor="middle" font-family="system-ui,sans-serif">5</text><circle cx="62" cy="58" r="6" fill="#E8734A"/><circle cx="82" cy="54" r="6" fill="#F0A03C"/><circle cx="102" cy="54" r="6" fill="#F5C542"/><circle cx="122" cy="58" r="6" fill="#5AA9E6"/><circle cx="140" cy="66" r="6" fill="#6BAF6B"/></svg>`,
+
+  // 部分整体：一个圆分成几块
+  'logic-partwhole': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#F2EEF8"/><circle cx="100" cy="100" r="46" fill="#F5C542" stroke="#E8A33D" stroke-width="3"/><path d="M100 100 L100 54 M100 100 L142 124 M100 100 L58 124" stroke="#E8A33D" stroke-width="3"/></svg>`,
+
+  // 圆柱与圆锥：并排两个立体
+  'space-cylinder': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#EDF1F7"/><rect x="42" y="72" width="48" height="58" fill="#5A96D6"/><ellipse cx="66" cy="72" rx="24" ry="9" fill="#85B7EB"/><ellipse cx="66" cy="130" rx="24" ry="9" fill="#3F7CB8"/><path d="M120 72 L144 130 L96 130 Z" fill="#E8734A"/><ellipse cx="120" cy="72" rx="24" ry="9" fill="#F0A03C"/></svg>`,
+
+  // 拼图：两片 interlocking
+  'space-jigsaw': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#EFF4F8"/><path d="M48 64 h44 v8 q12 0 12 12 q0 12 -12 12 v36 h-44 v-8 q-12 0 -12 -12 q0 -12 12 -12 v-36 z" fill="#5AA9E6"/><path d="M120 64 h26 v76 h-26 v-8 q-12 0 -12 -12 q0 -12 12 -12 v-44 z" fill="#F0A03C"/></svg>`,
+
+  // 网格：方格 + 标记点
+  'space-grid': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#EFF4F8"/><path d="M40 58 h120 M40 98 h120 M40 138 h120 M60 38 v124 M100 38 v124 M140 38 v124" stroke="#B8D4E8" stroke-width="3"/><circle cx="100" cy="98" r="13" fill="#E8734A"/><circle cx="60" cy="58" r="6" fill="#5AA9E6"/></svg>`,
+
+  // 视角：杯子正面 + 俯视圆
+  'space-viewpoint': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#EDF1F7"/><path d="M46 78 h40 l-5 60 h-30 z" fill="#5A96D6"/><ellipse cx="66" cy="78" rx="20" ry="7" fill="#85B7EB"/><ellipse cx="66" cy="78" rx="12" ry="4" fill="#3F7CB8"/><ellipse cx="140" cy="110" rx="26" ry="26" fill="#E8734A" stroke="#C9542E" stroke-width="3"/><ellipse cx="140" cy="110" rx="14" ry="14" fill="#F0A03C"/></svg>`,
+
+  // 衣服：T 恤
+  'english-clothes': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#FDF0E8"/><path d="M70 62 l-30 14 14 26 16 -9 v50 h60 v-50 l16 9 14 -26 -30 -14 q-30 22 -60 0 z" fill="#E8734A"/></svg>`,
+
+  // 玩具：球
+  'english-toys': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#FDF0E8"/><circle cx="100" cy="100" r="44" fill="#5AA9E6"/><path d="M100 56 a44 44 0 0 1 0 88" stroke="#FFFFFF" stroke-width="5" fill="none"/><path d="M70 76 q30 26 60 0" stroke="#FFFFFF" stroke-width="4" fill="none"/><circle cx="100" cy="100" r="7" fill="#FFFFFF"/></svg>`,
+
+  // 学校：书 + 铅笔
+  'english-school': `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="88" fill="#FDF0E8"/><path d="M42 62 h58 a6 6 0 0 1 6 6 v66 h-64 v-66 a6 6 0 0 1 6 -6 z" fill="#5AA9E6"/><path d="M42 62 q29 -12 58 0" stroke="#3F7CB8" stroke-width="3" fill="none"/><rect x="112" y="82" width="14" height="58" rx="3" fill="#F0A03C" transform="rotate(20 119 111)"/><path d="M108 80 l8 -14 8 14 z" fill="#E8734A"/></svg>`,
 };
 
 /** 取插画，未知 key 返回一个占位图而不是 undefined —— 避免整个页面因为一张图崩掉 */

@@ -56,7 +56,17 @@ CHECKS = [
     ('assets/public/src/ui/home.js', b'has-review', '首页：复习态卡片样式钩子'),
     ('assets/public/src/styles.css', b'.map-entry.has-review', '首页：复习态卡片橙色描边'),
     ('assets/public/src/ui/map.js', b'export function terrain', '岛屿地形装饰'),
-    ('assets/public/sw.js', b'kids-encyclopedia-v6', None),  # sw.js 不进 APK，下面单独判
+    # ── 内容扩充（2026-09-17 第二批 +23）──
+    ('assets/public/src/data/science.js', b"id: 'science-snow'", '扩充：雪'),
+    ('assets/public/src/data/geo.js', b"id: 'geo-glacier'", '扩充：冰川'),
+    ('assets/public/src/data/culture.js', b"id: 'culture-telescope'", '扩充：望远镜'),
+    ('assets/public/src/data/logic.js', b"id: 'logic-cardinal'", '扩充：数物对应'),
+    ('assets/public/src/data/space.js', b"id: 'space-jigsaw'", '扩充：拼图'),
+    ('assets/public/src/data/english.js', b"id: 'english-school'", '扩充：学校'),
+    ('assets/public/src/art/index.js', b"'science-snow'", '新增插画：雪'),
+    ('assets/public/src/art/index.js', b"'space-jigsaw'", '新增插画：拼图'),
+    ('assets/public/src/art/index.js', b"'english-school'", '新增插画：学校'),
+    ('assets/public/sw.js', b'kids-encyclopedia-v7', None),  # sw.js 不进 APK，下面单独判
 ]
 
 with zipfile.ZipFile(APK) as z:
