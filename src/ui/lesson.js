@@ -746,6 +746,19 @@ export function renderLesson({ container, item, topic, store, speech, go }) {
     const stars = createStars();
     const overlay = h('div', { class: 'lesson-overlay' });
 
+    const isFull = starCount === 3;
+    // 满分 / 未满分两态横幅（金色庆祝 / 橙色鼓励）
+    const banner = h(
+      'div',
+      {
+        class: 'lesson-report-banner',
+        style: isFull
+          ? 'margin:6px auto 0;padding:8px 18px;border-radius:999px;background:linear-gradient(135deg,#FFE082,#FFB300);color:#7a4a00;font-weight:700;font-size:17px;display:inline-block;box-shadow:0 2px 8px rgba(255,179,0,.35);'
+          : 'margin:6px auto 0;padding:8px 18px;border-radius:999px;background:#E8F5E9;color:#2e7d32;font-weight:700;font-size:16px;display:inline-block;',
+      },
+      isFull ? '满分！你真是小学霸 🌟' : '完成啦，继续加油'
+    );
+
     const stats = [
       { k: '答对', v: `${correct} / ${totalQ}` },
       { k: '讲述', v: state.teachSpoke ? '完成' : '跟读' },
@@ -780,6 +793,7 @@ export function renderLesson({ container, item, topic, store, speech, go }) {
     body.replaceChildren(
       overlay,
       h('p', { class: 'lesson-step-tag' }, '探索报告'),
+      h('div', { style: 'text-align:center;' }, banner),
       h('div', { class: 'lesson-report' },
         mascotImg('cheer'),
         h('h3', { class: 'lesson-report-title' }, `${item.name} · 探究完成`),

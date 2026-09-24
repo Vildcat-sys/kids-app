@@ -79,11 +79,16 @@ export default {
         '十个一捆叫「十」，十个十捆叫「百」，十个百捆叫「千」，这就是十进制的由来。',
       ],
       quiz: {
-        type: 'choice',
-        q: '一只手有几根手指？两只手合起来呢？',
-        opts: ['5 根和 10 根', '5 根和 8 根', '10 根和 20 根'],
-        a: 0,
-        why: '一只手 5 根手指，两只手合起来是 10 根。伸出两只手数一数就知道了。',
+        type: 'mole',
+        q: '找出所有「苹果」，限时点一点',
+        duration: 20,
+        moles: [
+          { label: '苹果', target: true },
+          { label: '苹果', target: true },
+          { label: '皮球', target: false },
+          { label: '香蕉', target: false },
+        ],
+        why: '一个一个点着数，数完再数一遍就不会错。',
       },
     },
     {

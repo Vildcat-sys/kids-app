@@ -63,11 +63,11 @@ export default {
         '向日葵的花盘周围是黄色的花瓣。',
       ],
       quiz: {
-        type: 'choice',
-        q: '小鸭子的绒毛是什么颜色？',
-        opts: ['黄色', '黑色', '绿色'],
-        a: 0,
-        why: '小鸭子毛茸茸的黄色，香蕉也是黄的。',
+        type: 'coloring',
+        q: '给小太阳涂上温暖的颜色',
+        target: 'sun',
+        palette: ['#FFD54F', '#FFB300', '#FF8A3D', '#FF6B6B', '#A5D6A7'],
+        why: '黄色暖暖的，像小鸭子和熟透的香蕉。',
       },
     },
     {

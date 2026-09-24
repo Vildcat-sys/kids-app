@@ -253,11 +253,10 @@ export default {
         'sh 读 /ʃ/，ch 读 /tʃ/，th 读 /θ/ —— 两个字母合起来只发一个音。',
       ],
       quiz: {
-        type: 'choice',
-        q: '下面哪个单词和 cat 押韵？',
-        opts: ['bat', 'dog', 'sun'],
-        a: 0,
-        why: 'cat 和 bat 结尾都是 -at，所以读起来押韵。dog 结尾是 -og，sun 结尾是 -un，都不押韵。',
+        type: 'egg',
+        q: '砸蛋学单词',
+        words: ['cat', 'bat', 'hat', 'mat'],
+        why: 'cat、bat、hat、mat 结尾都是 -at，读起来都押韵。',
       },
     },
     {

@@ -18,6 +18,21 @@ import { h } from '../core/dom.js';
 const STAR_PATH =
   '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.6l2.7 6.1 6.6.6-5 4.4 1.5 6.5L12 16.9 6.2 20.2l1.5-6.5-5-4.4 6.6-.6z"/></svg>';
 
+/* 存钱罐（内联 SVG，水彩粉猪；.piggy-fill 是罐子里金币液面，高度由 JS 抬升） */
+const PIGGY_SVG =
+  '<svg viewBox="0 0 120 96" fill="none">' +
+  '<ellipse cx="60" cy="78" rx="46" ry="8" fill="rgba(0,0,0,.08)"/>' +
+  '<rect class="piggy-fill" x="22" y="52" width="76" height="0" rx="6" fill="#F5B942" opacity="0.85"/>' +
+  '<path d="M30 40 Q30 22 60 22 Q90 22 90 40 L92 58 Q92 74 60 74 Q28 74 28 58 Z" fill="#FFB3C1" stroke="#E88AA0" stroke-width="2"/>' +
+  '<circle cx="96" cy="48" r="9" fill="#FFB3C1" stroke="#E88AA0" stroke-width="2"/>' +
+  '<circle cx="96" cy="48" r="3" fill="#E88AA0"/>' +
+  '<circle cx="52" cy="42" r="2.4" fill="#5b3a3a"/>' +
+  '<circle cx="68" cy="42" r="2.4" fill="#5b3a3a"/>' +
+  '<path d="M48 30 L72 30 L70 26 L50 26 Z" fill="#B87A0E"/>' +
+  '<rect x="40" y="72" width="8" height="10" rx="3" fill="#E88AA0"/>' +
+  '<rect x="72" y="72" width="8" height="10" rx="3" fill="#E88AA0"/>' +
+  '</svg>';
+
 const CONFETTI_COLORS = ['#FF8A65', '#FFD54F', '#6BCB77', '#4D96FF', '#B388EB', '#FF6B9D', '#FFB74D'];
 
 function rand(min, max) {
@@ -66,6 +81,19 @@ export function playCoinTier(n) {
   for (let i = 0; i < count; i += 1) {
     tone(notes[i], i * 0.09, 0.2, 'triangle', 0.09);
   }
+}
+
+/** 投币入罐：清脆的「叮」（硬币撞罐口）。 */
+export function playCoinDrop() {
+  tone(1567.98, 0, 0.12, 'square', 0.08); // G6
+  tone(2093.0, 0.05, 0.18, 'triangle', 0.07); // C7 上行
+}
+
+/** 罐子晃一晃：低沉的咕噜晃动感（拨弦低回 + 微抖）。 */
+export function playJarShake() {
+  tone(220, 0, 0.16, 'sine', 0.10, 180);
+  tone(246.9, 0.09, 0.14, 'sine', 0.09, 200);
+  tone(220, 0.18, 0.18, 'sine', 0.08, 165);
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -148,11 +176,20 @@ export function coinFly(root, { count = 1 } = {}) {
   const layer = h('div', { class: 'coin-layer', 'aria-hidden': 'true' });
   const w = root.clientWidth || window.innerWidth || 360;
   const hgt = root.clientHeight || window.innerHeight || 640;
-  // 起点：浮层中心偏上；终点：右上角钱袋（与首页金币条同位置）
+  // 起点：浮层中心偏上；终点：右上角存钱罐口
   const p0 = { x: w / 2, y: hgt * 0.42 };
-  const p1 = { x: w - 24, y: 18 };
+  const p1 = { x: w - 56, y: 30 };
   // 控制点：往左上拱，形成一条上扬的弧线
   const pc = { x: w * 0.6, y: hgt * 0.12 };
+
+  // 存钱罐：固定在右上角，硬币飞进罐口；罐内金币液面随枚数抬升
+  const jar = h('div', { class: 'piggy-jar', html: PIGGY_SVG });
+  jar.style.right = '6px';
+  jar.style.top = '6px';
+  jar.style.position = 'absolute';
+  jar.style.width = '96px';
+  layer.appendChild(jar);
+  const fillEl = jar.querySelector('.piggy-fill');
 
   for (let i = 0; i < count; i += 1) {
     const coin = h('span', { class: 'reward-coin', style: { left: '0', top: '0' } });
@@ -171,10 +208,22 @@ export function coinFly(root, { count = 1 } = {}) {
       easing: 'cubic-bezier(.3,.7,.4,1)',
       fill: 'forwards',
     });
-    anim.onfinish = () => coin.remove();
+    anim.onfinish = () => {
+      coin.remove();
+      // 每进一枚：液面抬一点（罐内可视高度 ~22px，3 枚填满）
+      if (fillEl) {
+        const level = Math.min(22, 6 * (i + 1));
+        fillEl.style.transition = 'height .4s ease';
+        fillEl.setAttribute('height', String(level));
+        fillEl.style.height = `${level}px`;
+        playCoinDrop();
+      }
+    };
   }
   root.appendChild(layer);
-  setTimeout(() => { if (layer.parentNode) layer.remove(); }, 2200);
+  // 全部入罐后晃一晃罐子
+  setTimeout(() => playJarShake(), 1100 + count * 120);
+  setTimeout(() => { if (layer.parentNode) layer.remove(); }, 2600);
   return layer;
 }
 

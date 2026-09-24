@@ -29,7 +29,10 @@
 //     未完成推进给温柔提示、竖屏禁横向溢出。改了 lesson.js 与 styles-kids.css，缓存版本号 +1。
 // v17：v5 全库水彩手绘绘本风 + 跟读复述改造 + 手绘奇奇 logo；改了 lesson.js 文案，缓存版本号 +1。
 // v18：作品墙 + 成就卡 + 反馈降级链——新增 ui/work-card.js、ui/works.js，改 lesson/home/main/styles。
-const CACHE = 'kids-encyclopedia-v18';
+// v19：9 玩法落地——新增 quiz-types/egg.js、trace.js、coloring.js、mole.js、branch.js；
+//     reward.js 存钱罐（飞罐+液面+投币/晃罐音）；lesson.js 报告满分/未满分两态；
+//     book-library/card 加分级星章/已读/放大镜/点词翻译。
+const CACHE = 'kids-encyclopedia-v19';
 
 const ASSETS = [
   './',
@@ -68,6 +71,11 @@ const ASSETS = [
   './src/quiz-types/listen.js',
   './src/quiz-types/order.js',
   './src/quiz-types/match.js',
+  './src/quiz-types/egg.js',
+  './src/quiz-types/trace.js',
+  './src/quiz-types/coloring.js',
+  './src/quiz-types/mole.js',
+  './src/quiz-types/branch.js',
 
   './src/data/index.js',
   './src/data/science.js',

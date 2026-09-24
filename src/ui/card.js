@@ -30,8 +30,102 @@ const ARROW_RIGHT =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>';
 const LAB_ICON =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6.2L4.8 18a2.4 2.4 0 002.1 3.6h10.2A2.4 2.4 0 0019.2 18L14 9.2V3"/><path d="M7.6 14.5h8.8"/></svg>';
+const CLOSE_ICON =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
 
 const TOTAL_PAGES = 4;
+
+/* ── §3.6 新增：本模块作用域样式（放大镜浮层 / 点词翻译气泡，不碰全局 CSS） ── */
+let cardCssInited = false;
+function ensureCardCss() {
+  if (cardCssInited || typeof document === 'undefined') return;
+  cardCssInited = true;
+  const style = document.createElement('style');
+  style.textContent = `
+    .crdx-lightbox { position: fixed; inset: 0; z-index: 9999; background: rgba(20,24,30,.92);
+      display: flex; align-items: center; justify-content: center; touch-action: none; }
+    .crdx-stage { display: flex; align-items: center; justify-content: center; cursor: grab; touch-action: none; }
+    .crdx-stage:active { cursor: grabbing; }
+    .crdx-media { will-change: transform; }
+    .crdx-media img, .crdx-media svg { width: 64vmin; height: auto; max-height: 80vh; display: block; pointer-events: none; }
+    .crdx-x { position: absolute; top: 16px; right: 16px; width: 44px; height: 44px; border-radius: 50%;
+      border: none; background: rgba(255,255,255,.92); color: #333; display: flex; align-items: center;
+      justify-content: center; cursor: pointer; }
+    .crdx-x svg { width: 22px; height: 22px; }
+    .crdx-tip { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+      max-width: min(92vw, 560px); background: #fff; border-radius: 16px; padding: 14px 18px;
+      box-shadow: 0 8px 30px rgba(0,0,0,.2); z-index: 9998; font-size: 15px; line-height: 1.55; color: #3a3a3a; }
+    .crdx-tip b { color: #185FA5; }
+    .book-img { cursor: zoom-in; }
+  `;
+  document.head.appendChild(style);
+}
+
+/* 从一页文本里抽出英文片段（整句点按，不做逐词分词）。
+   本项目绘本页文本是中文讲解，里面夹着目标英文词（red、apple…），
+   取这些拉丁串拼成一句交给 sayWord 用 en-US 朗读。 */
+function englishOnPage(text) {
+  const m = String(text || '').match(/[A-Za-z][A-Za-z''-]*/g);
+  if (!m) return '';
+  return m.map((s) => s.trim()).filter(Boolean).join(' ').trim();
+}
+
+/** 全屏放大镜：图片 CSS transform scale(2) 居中，可拖动看细节，X/点空白退出 */
+function openLightbox(html) {
+  ensureCardCss();
+  const overlay = h('div', { class: 'crdx-lightbox' });
+  const media = h('div', { class: 'crdx-media', html });
+  const stage = h('div', { class: 'crdx-stage' }, media);
+  const closeBtn = h('button', { class: 'crdx-x', type: 'button', 'aria-label': '关闭', html: CLOSE_ICON });
+  overlay.appendChild(stage);
+  overlay.appendChild(closeBtn);
+  document.body.appendChild(overlay);
+
+  let ox = 0;
+  let oy = 0;
+  const apply = () => { media.style.transform = `translate(${ox}px, ${oy}px) scale(2)`; };
+  apply();
+
+  let dragging = false;
+  let pid = null;
+  let sx = 0;
+  let sy = 0;
+  stage.addEventListener('pointerdown', (e) => {
+    dragging = true;
+    pid = e.pointerId;
+    sx = e.clientX - ox;
+    sy = e.clientY - oy;
+    try { stage.setPointerCapture(e.pointerId); } catch (err) { /* 忽略 */ }
+  });
+  stage.addEventListener('pointermove', (e) => {
+    if (!dragging || e.pointerId !== pid) return;
+    ox = e.clientX - sx;
+    oy = e.clientY - sy;
+    apply();
+  });
+  const end = () => { dragging = false; pid = null; };
+  stage.addEventListener('pointerup', end);
+  stage.addEventListener('pointercancel', end);
+
+  function close() { overlay.remove(); }
+  closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+}
+
+/* 点词翻译：朗读该页英文 + 弹「这一页讲的是：<中文>」 */
+function tapTranslate(item, pages, speech, idx) {
+  ensureCardCss();
+  const zh = pages[idx] || '';
+  const en = englishOnPage(zh) || (item.quiz && item.quiz.word) || '';
+  if (en) speech.sayWord(en);
+  // 中文浮层
+  const old = document.querySelector('.crdx-tip');
+  if (old) old.remove();
+  const tip = h('div', { class: 'crdx-tip' }, h('b', {}, '这一页讲的是：'), zh);
+  document.body.appendChild(tip);
+  clearTimeout(tapTranslate._t);
+  tapTranslate._t = setTimeout(() => tip.remove(), 3200);
+}
 
 /**
  * @param {object} ctx
@@ -59,8 +153,16 @@ export function renderCard({ container, item, topic, store, speech, go, openQuiz
 
   const pageEls = [];
   for (let i = 0; i < TOTAL_PAGES; i++) {
-    const imgArea = h('div', { class: 'book-img', html: pageImageHTML(i) });
-    const textArea = h('p', { class: 'book-text' }, pages[i]);
+    // 点大图 → 全屏放大浮层（放大镜看细节）
+    const imgArea = h('div', {
+      class: 'book-img', html: pageImageHTML(i),
+      onClick: () => openLightbox(pageImageHTML(i)),
+    });
+    // 点文本 → 朗读该页英文 + 弹中文翻译浮层（整句点按，不做逐词分词）
+    const textArea = h('p', {
+      class: 'book-text',
+      onClick: () => tapTranslate(item, pages, speech, i),
+    }, pages[i]);
     const page = h('div', { class: `book-page ${i === 0 ? 'active' : ''}` }, imgArea, textArea);
     pageEls.push(page);
   }

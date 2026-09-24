@@ -40,12 +40,22 @@ import choice from './choice.js';
 import listen from './listen.js';
 import order from './order.js';
 import match from './match.js';
+import egg from './egg.js';
+import trace from './trace.js';
+import coloring from './coloring.js';
+import mole from './mole.js';
+import branch from './branch.js';
 
 export const QUIZ_TYPES = {
   choice,
   listen,
   order,
   match,
+  egg,
+  trace,
+  coloring,
+  mole,
+  branch,
 };
 
 /** 取题型实现，未知类型返回 null（调用方负责降级） */
