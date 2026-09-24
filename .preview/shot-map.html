@@ -2,8 +2,10 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
+<base href="../">
 <title>shot-map</title>
-<link rel="stylesheet" href="../src/styles.css">
+<link rel="stylesheet" href="src/styles.css">
+<link rel="stylesheet" href="src/styles-kids.css">
 <style>
   /* 关掉全部动画：--virtual-time-budget 不推进 CSS 动画时钟，
      不关的话入场动画会永远停在 opacity:0，截出来一片空白 */
@@ -14,17 +16,19 @@
 <div id="app"></div>
 <script type="module">
 import { renderMap } from '../src/ui/map.js';
-import { getGroupsForAge } from '../src/data/index.js';
+import { SECTIONS, LEVEL_ALL, itemsOfSection } from '../src/data/index.js';
 
 const params = new URLSearchParams(location.search);
-const band = params.get('band') || 'all';
+// level=S1…S6 或 all。旧的 band=3-5/6-8 已随年龄档一起退场（prefs 现在叫 level）
+const level = params.get('level') || LEVEL_ALL;
 // learned=N：把前 N 个知识点标记为已掌握，用来同时看到
 // 「已点亮 / 下一个 / 未点亮」三种驿站状态
 const learned = Number(params.get('learned') || 0);
 // review=K：把已点亮的前 K 个标为「该温习了」，看第四态视觉
 const review = Number(params.get('review') || 0);
 
-const allItems = getGroupsForAge(band).flatMap((g) => g.topics.flatMap((t) => t.items));
+// 板块顺序即首页顺序，跨板块拍平后取前 N 个 —— 和 home.js 看到的是同一批内容
+const allItems = SECTIONS.flatMap((sec) => itemsOfSection(sec.id, level).map((e) => e.item));
 const learnedIds = allItems.slice(0, learned).map((i) => i.id);
 const reviewIds = new Set(learnedIds.slice(0, review));
 
@@ -33,7 +37,7 @@ const store = {
   has: (id) => learnedIds.includes(id),
   needsReview: (id) => reviewIds.has(id),
 };
-const prefs = { ageBand: () => band };
+const prefs = { level: () => level };
 
 renderMap({
   container: document.getElementById('app'),
@@ -42,8 +46,8 @@ renderMap({
   go: () => {},
 });
 
-document.title = `map-${band}-${learned}`;
-document.body.setAttribute('data-band', band);
+document.title = `map-${level}-${learned}`;
+document.body.setAttribute('data-level', level);
 document.body.setAttribute('data-learned', String(learned));
 document.body.setAttribute('data-total', String(allItems.length));
 </script>

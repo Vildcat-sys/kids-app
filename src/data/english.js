@@ -32,7 +32,6 @@ export default {
       name: '字母',
       pinyin: 'zì mǔ',
       art: 'english-letters',
-      ageBands: ['3-5', '6-8'],
       lead: '英语有 26 个字母。每个字母有自己的名字，也有它在单词里发的音。',
       facts: [
         '26 个字母里有 5 个元音字母：a、e、i、o、u，其他都是辅音字母。',
@@ -54,7 +53,6 @@ export default {
       name: '颜色',
       pinyin: 'yán sè',
       art: 'english-colors',
-      ageBands: ['3-5', '6-8'],
       lead: '英语里最基本的颜色词有 red、yellow、blue、green、black、white。',
       facts: [
         '三原色是红、黄、蓝。把它们两两混起来，能得到橙、绿、紫。',
@@ -76,7 +74,6 @@ export default {
       name: '数字',
       pinyin: 'shù zì',
       art: 'english-numbers',
-      ageBands: ['3-5'],
       lead: '英语数字 one、two、three、four、five，是学数数的开始。',
       facts: [
         'one 到 ten 是最基础的 10 个数字词，记住它们就能用英语数到十。',
@@ -98,7 +95,6 @@ export default {
       name: '动物',
       pinyin: 'dòng wù',
       art: 'english-animals',
-      ageBands: ['3-5', '6-8'],
       lead: 'cat、dog、bird、fish 是最早学会的一批动物词，因为它们就在身边。',
       facts: [
         '英语里动物的叫声要单独记：狗是 woof，猫是 meow，和中文的「汪汪」「喵」完全不同。',
@@ -120,7 +116,6 @@ export default {
       name: '身体',
       pinyin: 'shēn tǐ',
       art: 'english-body',
-      ageBands: ['3-5', '6-8'],
       lead: 'head、hand、foot、eye、ear —— 指着自己的身体说一遍，比背单词表记得牢。',
       facts: [
         '英语里成对的东西要用复数：一只眼是 eye，两只眼要说 eyes。',
@@ -144,7 +139,6 @@ export default {
       name: '家人',
       pinyin: 'jiā rén',
       art: 'english-family',
-      ageBands: ['3-5', '6-8'],
       lead: 'mom、dad、sister、brother —— 家里的人，是孩子最先想用英语说出来的词。',
       facts: [
         '英语里 sister 不分姐姐和妹妹，brother 也不分哥哥和弟弟，要说 big 或 little 才分得清。',
@@ -166,7 +160,6 @@ export default {
       name: '食物',
       pinyin: 'shí wù',
       art: 'english-food',
-      ageBands: ['3-5', '6-8'],
       lead: 'milk、bread、rice、egg —— 餐桌上最常见的东西，也是最好用的第一批英语词。',
       facts: [
         'bread 是不可数名词，两片面包要说 two slices of bread，不能直接说 two breads。',
@@ -188,7 +181,6 @@ export default {
       name: '天气',
       pinyin: 'tiān qì',
       art: 'english-weather',
-      ageBands: ['3-5', '6-8'],
       lead: 'sunny、rainy、windy、snowy —— 出门前看看天，就有一个现成的英语话题。',
       facts: [
         '这些天气词大多以 -y 结尾：sun 加 y 变成 sunny，rain 加 y 变成 rainy。',
@@ -208,7 +200,6 @@ export default {
       name: '动作',
       pinyin: 'dòng zuò',
       art: 'english-actions',
-      ageBands: ['3-5', '6-8'],
       lead: 'run、jump、eat、sleep —— 边说边做动作，孩子记住的是动作，不是单词表。',
       facts: [
         '这 4 个词都是动词，动词就是表示「做什么」的词。',
@@ -232,7 +223,6 @@ export default {
       name: '问候',
       pinyin: 'wèn hòu',
       art: 'english-greetings',
-      ageBands: ['3-5', '6-8'],
       lead: 'Hello、please、thank you、sorry —— 这 4 个词能让孩子说出第一句英语。',
       facts: [
         'please 放在句子末尾时要加逗号，写成 Can I have it, please?',
@@ -247,16 +237,15 @@ export default {
       },
     },
 
-    /* ─────────── 以下 5 个只给 6-8 档 ───────────
+    /* ─────────── 以下 5 个只给 S4 及以上 ───────────
      * 判据：它们都建立在「已经认字」之上。3-5 岁孩子连选项都读不出来，
-     * 给了也是白给 —— 所以 ageBands 只写 ['6-8']，不写两档通用。 */
+     * 给了也是白给 —— 所以这 5 个的级别都标在 S4 以上。 */
 
     {
       id: 'english-phonics',
       name: '自然拼读',
       pinyin: 'zì rán pīn dú',
       art: 'english-phonics',
-      ageBands: ['6-8'],
       lead: '很多英语单词长得很像，读起来也像。抓住结尾那几个字母，就能猜出怎么读。',
       facts: [
         'cat、bat、hat、mat 结尾都是 -at，四个词读起来都押韵。',
@@ -276,7 +265,6 @@ export default {
       name: '短句',
       pinyin: 'duǎn jù',
       art: 'english-sentences',
-      ageBands: ['6-8'],
       lead: '把单词按顺序排好，就能说出一句话。英语句子先说「谁」，再说「做什么」。',
       facts: [
         '"I like apples." 只有 3 个词，但已经是一句完整的话。',
@@ -295,7 +283,6 @@ export default {
       name: '方位词',
       pinyin: 'fāng wèi cí',
       art: 'english-prepositions',
-      ageBands: ['6-8'],
       lead: 'in、on、under 告诉别人东西在哪里。它们是英语里最常用的小词。',
       facts: [
         'in 是「在里面」，on 是「在上面」，under 是「在下面」。',
@@ -319,7 +306,6 @@ export default {
       name: '疑问词',
       pinyin: 'yí wèn cí',
       art: 'english-questions',
-      ageBands: ['6-8'],
       lead: '想问问题，开头要用疑问词。what 问「什么」，where 问「哪里」，who 问「谁」。',
       facts: [
         'what 问东西，where 问地方，who 问人 —— 三个词分工很清楚。',
@@ -339,7 +325,6 @@ export default {
       name: '时间词',
       pinyin: 'shí jiān cí',
       art: 'english-time',
-      ageBands: ['6-8'],
       lead: '说清楚「什么时候」，要用时间词。today 是今天，tomorrow 是明天。',
       facts: [
         'morning 是早上，afternoon 是下午，night 是晚上。',
@@ -363,7 +348,6 @@ export default {
       name: '衣服',
       pinyin: 'yī fu',
       art: 'english-clothes',
-      ageBands: ['3-5', '6-8'],
       lead: 'shirt、pants、shoes —— 每天穿的衣服，是最先学会的一批英语词。',
       facts: [
         'clothes 是衣服的总称，shirt 是上衣，pants 是裤子。',
@@ -385,7 +369,6 @@ export default {
       name: '玩具',
       pinyin: 'wán jù',
       art: 'english-toys',
-      ageBands: ['3-5', '6-8'],
       lead: 'ball、doll、block —— 玩具是孩子的世界，也是好玩的英语词。',
       facts: [
         'ball 是球，doll 是娃娃，block 是积木，都是孩子天天玩的。',
@@ -407,7 +390,6 @@ export default {
       name: '学校',
       pinyin: 'xué xiào',
       art: 'english-school',
-      ageBands: ['6-8'],
       lead: 'teacher、book、pencil、classroom —— 学校里天天见的人和物，都能说成英语。',
       facts: [
         'teacher 是老师，classroom 是教室，两个词里都有 class（课）。',
@@ -424,6 +406,170 @@ export default {
           ['classroom', '教室'],
         ],
         why: 'teacher 是老师，book 是书，pencil 是铅笔，classroom 是教室。学校里这几样天天见。',
+      },
+    },
+    {
+      id: 'english-fruits',
+      name: '水果',
+      pinyin: 'shuǐ guǒ',
+      art: 'english-fruits',
+      lead: 'apple、banana、orange —— 水果是孩子最爱吃的东西，也是最好学的一批英语词。',
+      facts: [
+        'apple 是苹果，一颗普通苹果大约重 200 克，和一个拳头差不多大。',
+        'banana 是香蕉，一串香蕉常常有 10 根左右，每根都弯成月牙形。',
+        'orange 是橙子，一个橙子大约分成 10 瓣，剥开皮一瓣一瓣吃。',
+      ],
+      quiz: {
+        type: 'listen',
+        q: '听一听，选出你听到的单词',
+        word: 'apple',
+        zh: '苹果',
+        opts: ['apple', 'banana', 'orange'],
+        a: 0,
+        why: 'apple 读作 /ˈæpl/，意思是苹果。开头的 a 读 /æ/，嘴要张大，和 ant（蚂蚁）开头的音一样。',
+      },
+    },
+    {
+      id: 'english-transport',
+      name: '交通',
+      pinyin: 'jiāo tōng',
+      art: 'english-transport',
+      lead: 'bus、car、train —— 每天出门坐的车，都有一个对应的英语词。',
+      facts: [
+        'bus 是公交车，一辆大约能坐 40 个人，里面有一排排座位。',
+        'car 是小汽车，普通家用车有 4 个轮子，能坐 4 到 5 个人。',
+        'train 是火车，一列火车有十几节车厢，能拉上千个人。',
+      ],
+      quiz: {
+        type: 'listen',
+        q: '听一听，选出你听到的单词',
+        word: 'bus',
+        zh: '公交车',
+        opts: ['bus', 'car', 'train'],
+        a: 0,
+        why: 'bus 读作 /bʌs/，意思是公交车。元音读 /ʌ/，短促有力，不要读成 book 里的 /ʊ/。',
+      },
+    },
+    {
+      id: 'english-jobs',
+      name: '职业',
+      pinyin: 'zhí yè',
+      art: 'english-jobs',
+      lead: 'teacher、doctor、farmer —— 不同的人做不同的工作，这些工作都有名字。',
+      facts: [
+        'teacher 是老师，在学校里教学生读书写字。',
+        'doctor 是医生，在医院里给人看病、开药方。',
+        'farmer 是农民，在地里种庄稼，我们吃的米饭就来自他们种的稻子。',
+      ],
+      quiz: {
+        type: 'listen',
+        q: '听一听，选出你听到的单词',
+        word: 'teacher',
+        zh: '老师',
+        opts: ['teacher', 'doctor', 'farmer'],
+        a: 0,
+        why: 'teacher 读作 /ˈtiːtʃər/，意思是老师。结尾的 -er 表示「做这件事的人」，teach 是教，加 er 就是教书的人。',
+      },
+    },
+    {
+      id: 'english-sports',
+      name: '运动',
+      pinyin: 'yùn dòng',
+      art: 'english-sports',
+      lead: 'football、basketball、swimming —— 跑步打球游泳，运动让身体更强壮。',
+      facts: [
+        'football 是足球，一个标准足球大约由 32 块皮子拼成。',
+        'basketball 是篮球，篮球架比人高，大约 3 米，球要投进上面那个圈里。',
+        'swimming 是游泳，人在水里游，和在地上跑步用的力气完全不一样。',
+      ],
+      quiz: {
+        type: 'listen',
+        q: '听一听，选出你听到的单词',
+        word: 'football',
+        zh: '足球',
+        opts: ['football', 'basketball', 'swimming'],
+        a: 0,
+        why: 'football 读作 /ˈfʊtbɔːl/，意思是足球。foot 是脚，ball 是球，两个词拼起来就是「用脚踢的球」。',
+      },
+    },
+    {
+      id: 'english-nature',
+      name: '自然',
+      pinyin: 'zì rán',
+      art: 'english-nature',
+      lead: 'flower、tree、grass —— 走到院子里，这三样东西到处都能看见。',
+      facts: [
+        'flower 是花，一朵花有花瓣和花蕊，开过以后会结出果子。',
+        'tree 是树，有树干、树枝和叶子，一棵大树能活几十年甚至上百年。',
+        'grass 是草，草地铺在地上，割完了还能再长出来。',
+      ],
+      quiz: {
+        type: 'listen',
+        q: '听一听，选出你听到的单词',
+        word: 'flower',
+        zh: '花',
+        opts: ['flower', 'tree', 'grass'],
+        a: 0,
+        why: 'flower 读作 /ˈflaʊər/，意思是花。开头的 fl 要连着读，结尾的 er 轻轻带过。',
+      },
+    },
+    {
+      id: 'english-adjectives',
+      name: '形容词',
+      pinyin: 'xíng róng cí',
+      art: 'english-adjectives',
+      lead: 'big、small、tall —— 这三个词用来形容东西有多大、多小、多高。',
+      facts: [
+        'big 是「大」，用来形容一头大象；small 是「小」，用来形容一只蚂蚁。',
+        'tall 专门说「高」，形容一棵大树、一座高楼都用 tall，不用 big。',
+        '形容词放在名词前面：a big elephant（一头大象），a small ant（一只小蚂蚁）。',
+      ],
+      quiz: {
+        type: 'choice',
+        q: '想形容一棵树长得很高，应该用哪个词？',
+        opts: ['big', 'small', 'tall'],
+        a: 2,
+        why: 'tall 专门形容又高又直的东西，比如树和楼。big 是说体积大，small 是说小，都不管「高」这件事。',
+      },
+    },
+    {
+      id: 'english-verbs',
+      name: '动词短语',
+      pinyin: 'dòng cí',
+      art: 'english-verbs',
+      lead: 'get up、go to bed、sit down —— 每天从早到晚做的事，都能用两个词说出来。',
+      facts: [
+        'get up 是「起床」，就是早上从床上坐起来、站起来。',
+        'go to bed 是「上床睡觉」，和 get up 正好一对，一个起床一个睡觉。',
+        'sit down 是「坐下」，它的反面是 stand up（站起来）。',
+      ],
+      quiz: {
+        type: 'listen',
+        q: '听一听，选出你听到的单词',
+        word: 'get up',
+        zh: '起床',
+        opts: ['get up', 'go to bed', 'sit down'],
+        a: 0,
+        why: 'get up 读作 /ɡet ʌp/，意思是起床。get 读 /ɡet/，up 读 /ʌp/，两个词中间不拖长，连在一起读。',
+      },
+    },
+    {
+      id: 'english-festivals',
+      name: '节日',
+      pinyin: 'jié rì',
+      art: 'english-festivals',
+      lead: 'birthday、Christmas、New Year —— 一年里有很多节日，每个都有自己的名字。',
+      facts: [
+        'birthday 是生日，每年只有一次，就是你出生的那一天。',
+        'Christmas 是圣诞节，在每年 12 月 25 日，大人会送礼物给孩子。',
+        'New Year 是新年，在每年 1 月 1 日，全世界的人都庆祝新的一年开始。',
+      ],
+      quiz: {
+        type: 'choice',
+        q: '哪个节日在每年 12 月 25 日？',
+        opts: ['birthday', 'Christmas', 'New Year'],
+        a: 1,
+        why: 'Christmas 是圣诞节，固定在 12 月 25 日。birthday 是每个人自己生日的那一天，New Year 在 1 月 1 日。',
       },
     },
   ],

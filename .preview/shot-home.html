@@ -2,8 +2,10 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
+<base href="../">
 <title>shot-home</title>
-<link rel="stylesheet" href="../src/styles.css">
+<link rel="stylesheet" href="src/styles.css">
+<link rel="stylesheet" href="src/styles-kids.css">
 <style>
   /* 关掉全部动画：--virtual-time-budget 不推进 CSS 动画时钟，
      不关的话卡片入场动画会永远停在 opacity:0，截出来一片空白 */
@@ -15,22 +17,40 @@
 <script type="module">
 import { renderHome } from '../src/ui/home.js';
 import { createPrefs } from '../src/core/prefs.js';
-import { getTopicsForAge } from '../src/data/index.js';
+import {
+  SECTIONS,
+  LEVEL_ALL,
+  LEVEL_IDS_WITH_ALL,
+  DEFAULT_LEVEL,
+  getTopicsForLevel,
+} from '../src/data/index.js';
 
 const params = new URLSearchParams(location.search);
-const band = params.get('band') || 'all';
+// level=S1…S6 或 all。旧的 band=3-5/6-8 已随年龄档一起退场
+const level = params.get('level') || LEVEL_ALL;
 const asked = params.get('asked') === '1';
 const learnedN = Number(params.get('learned') || 0);
 const reviewK = Number(params.get('review') || 0);
+// 顶部游戏化栏的三个数。renderHome 现在会直接读它们，
+// store 桩少一个方法整个首页就渲染不出来（曾经踩过：TypeError: store.getCoins is not a function）。
+const coins = Number(params.get('coins') || 0);
+const stars = Number(params.get('stars') || 0);
+const streak = Number(params.get('streak') || 0);
 
 // 用一次性内存 storage，保证每次截图都是干净状态，
 // 不受上一次运行残留的 localStorage 影响（传 null 会回落到真实 localStorage）
 const scratch = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
-const prefs = createPrefs({ storage: scratch });
-prefs.setAgeBand(band);
-if (asked) prefs.markAskedAge();
+// 白名单与默认值按 main.js 的方式注入 —— 漏了它们 prefs 会退化成宽松模式，
+// 截图就验不出「非法级别被挡住」这条
+const prefs = createPrefs({
+  storage: scratch,
+  validLevels: LEVEL_IDS_WITH_ALL,
+  defaultLevel: DEFAULT_LEVEL,
+});
+prefs.setLevel(level);
+if (asked) prefs.markAskedLevel();
 
-const allItems = getTopicsForAge(band).flatMap((t) => t.items);
+const allItems = getTopicsForLevel(level).flatMap((t) => t.items);
 const learnedIds = allItems.slice(0, learnedN).map((i) => i.id);
 const reviewIds = new Set(learnedIds.slice(0, reviewK));
 
@@ -39,18 +59,21 @@ renderHome({
   store: {
     has: (id) => learnedIds.includes(id),
     needsReview: (id) => reviewIds.has(id),
+    // 顶部游戏化栏要这三个 —— 少一个就整页崩，别删
+    getCoins: () => coins,
+    totalStars: () => stars,
+    getStreak: () => streak,
   },
   prefs,
   go: () => {},
 });
 
-document.title = `home-${band}-asked${asked ? 1 : 0}`;
-document.body.setAttribute('data-band', band);
-document.body.setAttribute('data-topics', String(topics.length));
-document.body.setAttribute(
-  'data-items',
-  String(topics.reduce((n, t) => n + t.items.length, 0))
-);
+document.title = `home-${level}-asked${asked ? 1 : 0}`;
+document.body.setAttribute('data-level', level);
+// 下面两个属性给截图校验用：板块数必须恒为 7，知识点数随级别变。
+// （原来这里写的是 topics，那个变量根本不存在 —— 页面每次都在这一行抛异常）
+document.body.setAttribute('data-sections', String(SECTIONS.length));
+document.body.setAttribute('data-items', String(allItems.length));
 </script>
 </body>
 </html>

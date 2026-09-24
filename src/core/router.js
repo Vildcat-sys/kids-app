@@ -14,13 +14,20 @@
  * @param {object} options
  * @param {(hash: string) => any} options.resolve  把 hash 解析成路由对象
  * @param {(route: any) => void}  options.onChange 解析结果变化时回调
+ * @param {object} [options.win]  注入 window（测试用），默认真实 window。
+ *   以前 window 是硬抓的，Node 里测不了；现在可注入一个带
+ *   `location.hash` / `addEventListener` / `removeEventListener` 的假对象。
  * @returns {{ go: Function, current: Function, start: Function, stop: Function }}
  */
-export function createRouter({ resolve, onChange }) {
+export function createRouter({ resolve, onChange, win } = {}) {
+  // 浏览器里默认全局 window；测试时注入假对象。
+  const W = win || (typeof window !== 'undefined' ? window : undefined);
+  if (!W) throw new Error('createRouter: 缺少 window —— 浏览器外使用请注入 options.win');
+
   let started = false;
 
   function current() {
-    return window.location.hash || '#/';
+    return (W.location && W.location.hash) || '#/';
   }
 
   function dispatch() {
@@ -46,7 +53,7 @@ export function createRouter({ resolve, onChange }) {
      */
     go(hash) {
       if (current() === hash) dispatch();
-      else window.location.hash = hash;
+      else W.location.hash = hash;
     },
 
     current,
@@ -54,14 +61,14 @@ export function createRouter({ resolve, onChange }) {
     start() {
       if (started) return;
       started = true;
-      window.addEventListener('hashchange', handleHashChange);
+      W.addEventListener('hashchange', handleHashChange);
       dispatch();
     },
 
     stop() {
       if (!started) return;
       started = false;
-      window.removeEventListener('hashchange', handleHashChange);
+      W.removeEventListener('hashchange', handleHashChange);
     },
   };
 }

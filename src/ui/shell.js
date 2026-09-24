@@ -13,10 +13,25 @@ const STAR_ICON =
 /**
  * @param {object} options
  * @param {() => void} options.onHome 点击标题回到首页
+ * @param {() => void} [options.onParent] 点击「家长」进入成长报告
  * @returns {{ header: HTMLElement, main: HTMLElement, setStats: Function }}
  */
-export function createShell({ onHome }) {
+export function createShell({ onHome, onParent }) {
   const statsText = h('span', { class: 'stars-txt' }, '0 / 0');
+
+  const parentBtn = onParent
+    ? h(
+        'button',
+        {
+          class: 'parent-entry',
+          type: 'button',
+          onClick: onParent,
+          'aria-label': '打开成长报告',
+          title: '家长查看学习报告',
+        },
+        '家长'
+      )
+    : null;
 
   const header = h(
     'header',
@@ -28,6 +43,7 @@ export function createShell({ onHome }) {
       h('span', { class: 'brand-name' }, '小小百科')
     ),
     h('span', { class: 'spacer' }),
+    parentBtn,
     h(
       'div',
       { class: 'stars', title: '已经认识的知识点' },

@@ -3,7 +3,7 @@
  *
  * 这个页面最容易出的两类问题，都**看不出来**：
  *
- *   1. 领域漏登记进 GROUPS —— 不报错，只是从地图上静默消失。
+ *   1. 领域漏挂进板块 —— 不报错，只是从首页/地图上静默消失。
  *      上次是校验器兜住的，这里再断言一次（校验器是提交门禁，测试是回归网）。
  *   2. 布点算法溢出画布 —— 驿站画到边界外被裁掉，截图上只看到"少了一个点"，
  *      很难联想到是坐标算错了。所以这里直接验算坐标范围。
@@ -12,24 +12,53 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { TOPICS, GROUPS, getGroupsForAge, AGE_ALL } from '../src/data/index.js';
+import {
+  TOPICS,
+  SECTIONS,
+  LEVEL_ALL,
+  LEVEL_IDS,
+  itemsOfSection,
+  topicsOfSection,
+} from '../src/data/index.js';
 import { layoutDots, trailPath, terrain, dotSvg, isleSvg } from '../src/ui/map.js';
 
-/* ─────────────── 主题分组 ─────────────── */
+/* ─────────────── 板块归属 ─────────────── */
 
-test('每个领域都登记进了主题分组', () => {
-  const grouped = new Set(GROUPS.flatMap((g) => g.topics));
+/* 这一组原来的对象是 GROUPS（6 领域分 3 组），现在是 SECTIONS（7 板块）。
+   守卫的意图没变：**领域漏挂进板块，不会报错，只是从首页静默消失。** */
+
+test('每个领域都恰好挂在一个板块下', () => {
+  const owner = new Map();
+  for (const sec of SECTIONS) {
+    for (const tid of sec.topics || []) {
+      assert.equal(
+        owner.has(tid),
+        false,
+        `领域「${tid}」被板块「${owner.get(tid)}」和「${sec.id}」同时挂着`
+      );
+      owner.set(tid, sec.id);
+    }
+  }
+
   for (const topic of TOPICS) {
-    assert.ok(grouped.has(topic.id), `领域「${topic.name}」没进分组，会从地图页消失`);
+    assert.ok(owner.has(topic.id), `领域「${topic.name}」没挂进任何板块，会从首页消失`);
   }
 });
 
-test('分组里不引用不存在的领域', () => {
+test('板块不引用不存在的领域', () => {
   const known = new Set(TOPICS.map((t) => t.id));
-  for (const g of GROUPS) {
-    for (const id of g.topics) {
-      assert.ok(known.has(id), `分组「${g.name}」引用了不存在的领域 ${id}`);
+  for (const sec of SECTIONS) {
+    for (const id of sec.topics || []) {
+      assert.ok(known.has(id), `板块「${sec.name}」引用了不存在的领域 ${id}`);
     }
+  }
+});
+
+test('板块的 id / name / tagline 齐全', () => {
+  for (const sec of SECTIONS) {
+    assert.ok(sec.id, '有板块缺 id');
+    assert.ok(sec.name, `板块 ${sec.id} 缺 name`);
+    assert.ok(sec.tagline, `板块 ${sec.id} 缺 tagline —— 首页那张卡会少一行字`);
   }
 });
 
@@ -44,24 +73,33 @@ test('领域色不撞车', () => {
   }
 });
 
-test('分组过滤后不留空组，且知识点总数与全量一致', () => {
-  for (const band of [AGE_ALL, '3-5', '6-8']) {
-    const groups = getGroupsForAge(band);
-    for (const g of groups) {
-      assert.ok(g.topics.length > 0, `档位 ${band} 下分组「${g.name}」是空的`);
-      for (const t of g.topics) {
-        assert.ok(t.items.length > 0, `档位 ${band} 下领域「${t.name}」没有知识点`);
+test('板块色不撞车', () => {
+  const seen = new Map();
+  for (const sec of SECTIONS) {
+    const key = String(sec.accent || '').toLowerCase();
+    assert.ok(key, `板块「${sec.name}」缺 accent`);
+    assert.equal(seen.has(key), false, `${sec.name} 与 ${seen.get(key)} 撞色：${key}`);
+    seen.set(key, sec.name);
+  }
+});
+
+test('板块在每一级别下都不留空领域', () => {
+  for (const lv of [LEVEL_ALL, ...LEVEL_IDS]) {
+    for (const sec of SECTIONS) {
+      for (const t of topicsOfSection(sec.id, lv)) {
+        assert.ok(
+          t.items.length > 0,
+          `级别 ${lv} 下板块「${sec.name}」的领域「${t.name}」没有知识点`
+        );
       }
     }
   }
+});
 
-  // 全量档下，分组里的知识点总数必须等于知识点总数 —— 一个都不能少
-  const inGroups = getGroupsForAge(AGE_ALL).reduce(
-    (n, g) => n + g.topics.reduce((m, t) => m + t.items.length, 0),
-    0
-  );
+test('全量下板块里的知识点总数等于知识点总数 —— 一个都不能少', () => {
+  const inSections = SECTIONS.reduce((n, sec) => n + itemsOfSection(sec.id, LEVEL_ALL).length, 0);
   const inTopics = TOPICS.reduce((n, t) => n + t.items.length, 0);
-  assert.equal(inGroups, inTopics, '有知识点被分组漏掉了');
+  assert.equal(inSections, inTopics, '有知识点被板块漏掉了');
 });
 
 /* ─────────────── 布点算法 ─────────────── */

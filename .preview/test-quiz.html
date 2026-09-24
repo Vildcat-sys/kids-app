@@ -2,8 +2,10 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
+<base href="../">
 <title>题型交互测试</title>
-<link rel="stylesheet" href="../src/styles.css">
+<link rel="stylesheet" href="src/styles.css">
+<link rel="stylesheet" href="src/styles-kids.css">
 <style>
   #stage { max-width: 860px; margin: 0 auto; padding: 16px; }
   #testlog {
@@ -37,6 +39,7 @@
 */
 
 import { createStore } from '../src/core/store.js';
+import { createSpeech } from '../src/core/speech.js';
 import { renderCard } from '../src/ui/card.js';
 import { openQuiz } from '../src/ui/quiz.js';
 import { findItem, totalItemCount } from '../src/data/index.js';
@@ -47,7 +50,9 @@ let buf = '';
 const log = (m) => { buf += m + '\n'; logEl.textContent = buf; };
 
 /* 用静音替身，避免无头环境下的 TTS 报错干扰测试 */
-const speech = { supported: false, speak: () => false, stop: () => {} };
+/* 用真实 speech 模块，不要手写桩 —— 手写桩会随 UI 依赖面扩大而腐坏
+   （card.js 加了 speech.onStateChange，薄桩会让 renderCard 直接抛异常）。 */
+const speech = createSpeech();
 const store = createStore();
 
 const q = (sel) => document.querySelector(sel);
@@ -77,7 +82,7 @@ const steps = [];
 /* ================= 1. 三选一 ================= */
 steps.push([() => {
   mount('science-water-cycle');
-  q('[data-quiz]').click();
+  q('.book-quiz').click();
   const opts = qa('.opt');
   log(`1. choice（三选一）　选项数=${opts.length}`);
   log(`   题目：${q('.qhead h3').textContent}`);
@@ -92,7 +97,7 @@ steps.push([() => {
 /* ================= 2. 听音选词 ================= */
 steps.push([() => {
   mount('english-colors');
-  q('[data-quiz]').click();
+  q('.book-quiz').click();
   const opts = qa('.opt');
   log(`2. listen（听音选词）　选项数=${opts.length}　喇叭按钮=${q('.listen-btn') ? '有' : '无'}`);
   log(`   题目：${q('.qhead h3').textContent}`);
@@ -111,7 +116,7 @@ let orderIdx = 0;
 
 steps.push([() => {
   mount('logic-compare');
-  q('[data-quiz]').click();
+  q('.book-quiz').click();
   orderCards = qa('.order-card');
   log(`3. order（排序）　卡片数=${orderCards.length}`);
   log(`   打乱后顺序：${orderCards.map((c) => c.querySelector('.order-txt').textContent.trim()).join(' / ')}`);
@@ -139,7 +144,7 @@ const MATCH_PAIRS = [['正方形', '4 条'], ['长方形', '2 条'], ['等边三
 
 steps.push([() => {
   mount('space-symmetry');
-  q('[data-quiz]').click();
+  q('.book-quiz').click();
   const cols = qa('.match-col');
   matchL = Array.from(cols[0].querySelectorAll('.match-item'));
   matchR = Array.from(cols[1].querySelectorAll('.match-item'));

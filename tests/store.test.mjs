@@ -273,3 +273,184 @@ test('reset 会清空 learnedAt', () => {
   assert.equal(store.has('a'), false);
   assert.equal(store.learnedAt('a'), null);
 });
+
+/* ─────────────── 游戏化字段（v4：stars / coins / streak） ─────────────── */
+
+test('getStars 默认 0；setStars 只升不降', () => {
+  const { store } = tickedStore();
+  assert.equal(store.getStars('item-x'), 0);
+
+  store.setStars('item-x', 2);
+  assert.equal(store.getStars('item-x'), 2);
+
+  // 后来一次只拿到 1 星 —— 历史最好值不回退
+  store.setStars('item-x', 1);
+  assert.equal(store.getStars('item-x'), 2, '低星不覆盖高星');
+
+  store.setStars('item-x', 3);
+  assert.equal(store.getStars('item-x'), 3);
+});
+
+test('setStars 越界被夹到 0..3，非法 itemId 不写', () => {
+  const { store } = tickedStore();
+  store.setStars('a', 99);
+  assert.equal(store.getStars('a'), 3);
+  store.setStars('b', -5);
+  assert.equal(store.getStars('b'), 0);
+  store.setStars('', 3);
+  assert.equal(store.totalStars(), 3);
+});
+
+test('addCoins 累计金币；getCoins 返回当前值', () => {
+  const { store } = tickedStore();
+  assert.equal(store.getCoins(), 0);
+  store.addCoins(10);
+  store.addCoins(10);
+  assert.equal(store.getCoins(), 20);
+});
+
+test('连续打卡：首日=1，昨天连着=+1，今天重复=不变，断签后重新=1', () => {
+  const ctx = tickedStore();
+  const { store } = ctx;
+
+  store.addCoins(10);
+  assert.equal(store.getStreak(), 1, '第一次打卡');
+
+  store.addCoins(10); // 同一天再玩，不重复计数
+  assert.equal(store.getStreak(), 1, '同一天打卡不变');
+
+  ctx.advance(1); // 第二天
+  store.addCoins(10);
+  assert.equal(store.getStreak(), 2, '连续第二天 +1');
+
+  ctx.advance(2); // 跳过一天（断签）
+  assert.equal(store.getStreak(), 0, '断签后今天还没学，显示为 0');
+  store.addCoins(10);
+  assert.equal(store.getStreak(), 1, '断签后重新打卡从 1 计');
+});
+
+test('totalStars 汇总所有知识点星数', () => {
+  const { store } = tickedStore();
+  store.setStars('a', 3);
+  store.setStars('b', 2);
+  store.setStars('c', 1);
+  assert.equal(store.totalStars(), 6);
+});
+
+test('v3 老数据无损迁移：learned 保留，新字段给安全默认', () => {
+  const oldTime = 1_600_000_000_000;
+  const storage = memoryStorage({
+    [KEY]: JSON.stringify({
+      v: 3,
+      learned: ['a', 'b'],
+      learnedAt: { a: oldTime },
+      attempts: { a: 2 },
+      correct: { a: 1 },
+    }),
+  });
+  const store = createStore({ storage, now: () => 1_700_000_000_000 });
+
+  assert.equal(store.has('a'), true, '老知识点不丢');
+  assert.equal(store.has('b'), true);
+  assert.equal(store.learnedAt('a'), oldTime, '老时间戳保留');
+  assert.equal(store.stats().attempts, 2);
+  assert.equal(store.getStars('a'), 0);
+  assert.equal(store.getCoins(), 0);
+  assert.equal(store.getStreak(), 0);
+  assert.equal(store.totalStars(), 0);
+
+  // 触发一次写盘，确认落盘后 state.v 升到 4（迁移无损、进度不清零）
+  store.addCoins(1);
+  const persisted = JSON.parse(storage.getItem(KEY));
+  assert.equal(persisted.v, 4);
+  assert.deepEqual(persisted.learned, ['a', 'b'], '落盘后 learned 仍在');
+});
+
+test('v4 脏字段被降级：非法 stars/coins/streak 不污染状态', () => {
+  const { store } = tickedStore({
+    [KEY]: JSON.stringify({
+      v: 4,
+      learned: ['d'],
+      learnedAt: { d: 1_700_000_000_000 },
+      stars: { a: 99, b: -2, c: 'x', d: 2 },
+      coins: 'not-a-number',
+      streak: '3',
+      lastDay: 12345,
+    }),
+  });
+
+  assert.equal(store.getStars('a'), 3, '越界夹到 3');
+  assert.equal(store.getStars('b'), 0, '负数夹到 0');
+  assert.equal(store.getStars('c'), 0, '非法值丢弃');
+  assert.equal(store.getStars('d'), 2);
+  assert.equal(store.getCoins(), 0, '非法金币降级为 0');
+});
+
+test('reset 同时清空星数/金币/打卡', () => {
+  const { store } = tickedStore();
+  store.setStars('a', 3);
+  store.addCoins(10);
+  store.reset();
+  assert.equal(store.getCoins(), 0);
+  assert.equal(store.totalStars(), 0);
+  assert.equal(store.getStreak(), 0);
+});
+
+/* -- 每日金币上限（v4 激励） -- */
+
+test('addCoins 每日上限：发满 100 后超出部分不再入账', () => {
+  const store = createStore({ storage: memoryStorage() });
+  assert.equal(store.addCoins(60), 60);
+  assert.equal(store.addCoins(50), 40, '本日只剩 40 额度，入账 40');
+  assert.equal(store.getCoins(), 100);
+  assert.equal(store.addCoins(30), 0, '已到顶，超出部分入账 0');
+  assert.equal(store.getCoins(), 100, '总金币不再增加');
+  assert.equal(store.coinsToday(), 100);
+});
+
+test('addCoins 跨天重置今日额度', () => {
+  let now = Date.UTC(2026, 8, 23, 8, 0, 0);
+  const store = createStore({ storage: memoryStorage(), now: () => now });
+  store.addCoins(100);
+  assert.equal(store.getCoins(), 100);
+  assert.equal(store.addCoins(10), 0, '今天已到顶');
+
+  now = Date.UTC(2026, 8, 24, 8, 0, 0); // 第二天
+  assert.equal(store.addCoins(10), 10, '新的一天额度恢复');
+  assert.equal(store.getCoins(), 110);
+});
+
+/* -- 本地徽章（跨课成就） -- */
+
+test('evaluateBadges：点亮首个知识点解锁 first-light，重复评估不重复', () => {
+  const store = createStore({ storage: memoryStorage() });
+  assert.deepEqual(store.evaluateBadges(), [], '还没点亮，无徽章');
+
+  store.markLearned('science-tooth');
+  const newly = store.evaluateBadges();
+  assert.equal(newly.length, 1);
+  assert.equal(newly[0].id, 'first-light');
+  assert.ok(store.hasBadge('first-light'));
+
+  assert.deepEqual(store.evaluateBadges(), [], '已解锁的不重复发');
+  assert.equal(store.badgeIds().length, 1);
+});
+
+test('evaluateBadges：点亮 5 个解锁 light-5', () => {
+  const store = createStore({ storage: memoryStorage() });
+  for (let i = 1; i <= 5; i++) store.markLearned('item-' + i);
+  const newly = store.evaluateBadges().map((b) => b.id).sort();
+  assert.deepEqual(newly, ['first-light', 'light-5']);
+});
+
+test('reset 同时清空徽章与今日金币计数', () => {
+  const store = createStore({ storage: memoryStorage() });
+  store.addCoins(50);
+  store.markLearned('science-tooth');
+  store.evaluateBadges();
+  assert.ok(store.hasBadge('first-light'));
+  store.reset();
+  assert.deepEqual(store.badgeIds(), []);
+  assert.equal(store.coinsToday(), 0);
+  assert.equal(store.getCoins(), 0);
+});

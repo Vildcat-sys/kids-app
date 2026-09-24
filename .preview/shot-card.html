@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<!-- 图片路径按项目根算，加 base 指回根目录 -->
+<base href="../">
+<title>shot-card</title>
+<link rel="stylesheet" href="src/styles.css">
+<link rel="stylesheet" href="src/styles-kids.css">
+<style>
+  * { animation: none !important; transition: none !important; }
+  body { margin: 0; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script type="module">
+import { createStore } from '../src/core/store.js';
+import { createSpeech } from '../src/core/speech.js';
+import { renderCard } from '../src/ui/card.js';
+import { findItem } from '../src/data/index.js';
+
+const params = new URLSearchParams(location.search);
+const itemId = params.get('item') || 'science-shadow';
+const hit = findItem(itemId);
+
+if (!hit) {
+  document.body.textContent = '找不到知识点：' + itemId;
+} else {
+  const scratch = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
+  const store = createStore({ storage: scratch });
+  /* 用真实 speech 模块，不要手写桩。
+     手写桩会随 UI 依赖面扩大而腐坏：card.js 后来加了 speech.onStateChange，
+     薄桩会让 renderCard 直接抛异常、页面全空 —— 而 dump-dom 看不出原因，
+     只有截图是白的。用真模块就没有"忘了补哪个方法"这回事。 */
+  const speech = createSpeech();
+  renderCard({
+    container: document.getElementById('app'),
+    item: hit.item,
+    topic: hit.topic,
+    store,
+    speech,
+    go: () => {},
+    openQuiz: () => {},
+  });
+}
+</script>
+</body>
+</html>

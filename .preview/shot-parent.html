@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+<base href="../">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="src/styles.css" />
+    <link rel="stylesheet" href="src/styles-kids.css">
+    <title>家长端截图</title>
+    <style>
+      /* 截图页不进真实动画，避免入场动画导致内容透明（已知坑） */
+      * { animation: none !important; transition: none !important; }
+      body { margin: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module">
+      import { createStore } from '../src/core/store.js';
+      import { renderParent } from '../src/ui/parent.js';
+
+      // 内存 storage（行为对齐 Web Storage）。createStore 调用的是 getItem/setItem，
+      // 不是 Map 的 .get()，所以不能直接把原生 Map 传进去 —— 之前漏了这条，
+      // 截图渲染出来全 0 就是这个原因。
+      const DAY = 86400000;
+      const seeded = {
+        v: 3,
+        learned: [
+          'science-water-cycle',
+          'science-tooth',
+          'geo-great-wall',
+          'logic-counting',
+          'english-letters',
+        ],
+        learnedAt: {
+          'science-water-cycle': Date.now() - 2 * DAY,
+          'science-tooth': Date.now() - 9 * DAY, // 超过 7 天 → 该温习
+          'geo-great-wall': Date.now() - 1 * DAY,
+          'logic-counting': Date.now() - 30 * 60 * 1000,
+          'english-letters': Date.now() - 5 * DAY,
+        },
+        attempts: {
+          'science-water-cycle': 2,
+          'science-tooth': 1,
+          'geo-great-wall': 3,
+          'logic-counting': 1,
+          'english-letters': 2,
+        },
+        correct: {
+          'science-water-cycle': 2,
+          'science-tooth': 1,
+          'geo-great-wall': 2,
+          'logic-counting': 1,
+          'english-letters': 1,
+        },
+      };
+      function memoryStorage(seed) {
+        const map = new Map(Object.entries(seed));
+        return {
+          getItem: (k) => (map.has(k) ? map.get(k) : null),
+          setItem: (k, v) => map.set(k, String(v)),
+          removeItem: (k) => map.delete(k),
+        };
+      }
+      const store = createStore({ storage: memoryStorage({ 'kids-encyclopedia-progress-v2': JSON.stringify(seeded) }) });
+      // prefs 现在暴露的是 level()（S1–S6 取代了 3-5/6-8 年龄档）
+      const prefs = { level: () => 'all' };
+      renderParent({ container: document.getElementById('app'), store, prefs, go: () => {} });
+    </script>
+  </body>
+</html>

@@ -2,8 +2,10 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
+<base href="../">
 <title>shot-topic</title>
-<link rel="stylesheet" href="../src/styles.css">
+<link rel="stylesheet" href="src/styles.css">
+<link rel="stylesheet" href="src/styles-kids.css">
 <style>
   /* 关掉全部动画：--virtual-time-budget 不推进 CSS 动画时钟，
      不关的话卡片入场动画会永远停在 opacity:0，截出来一片空白 */
@@ -14,12 +16,13 @@
 <div id="app"></div>
 <script type="module">
 import { renderTopic } from '../src/ui/topic.js';
-import { findTopicForAge } from '../src/data/index.js';
+import { LEVEL_ALL, findTopicForLevel } from '../src/data/index.js';
 
 const params = new URLSearchParams(location.search);
 const topicId = params.get('topic') || 'geo';
-const band = params.get('band') || 'all';
-const topic = findTopicForAge(topicId, band);
+// level=S1…S6 或 all。旧的 band=3-5/6-8 已随年龄档一起退场
+const level = params.get('level') || LEVEL_ALL;
+const topic = findTopicForLevel(topicId, level);
 
 // renderTopic 只用到 store.has()，这里给个空实现即可，
 // 目的是量布局而不是验证进度逻辑（进度另有 store.test.mjs 覆盖）
@@ -29,12 +32,12 @@ renderTopic({
   container: document.getElementById('app'),
   topic,
   store,
-  band,
+  level,
   go: () => {},
 });
 
-document.title = `topic-${topicId}-${band}-${topic.items.length}`;
-document.body.setAttribute('data-band', band);
+document.title = `topic-${topicId}-${level}-${topic.items.length}`;
+document.body.setAttribute('data-level', level);
 document.body.setAttribute('data-count', String(topic.items.length));
 </script>
 </body>

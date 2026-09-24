@@ -11,8 +11,9 @@
  *   }
  *
  * 设计要点：
- *   答错时不惩罚、不扣星，只标出正确答案并给解释。
- *   3–8 岁阶段，答错本身已经是负反馈，再加惩罚会让孩子不敢尝试。
+ *   答错不结束、不惩罚、不记录失败：错误项轻轻摇头后禁用，孩子可以接着选，
+ *   直到选对为止，最终按错误次数给 1–3 星（星级与奖励在 ui/quiz.js 统一处理）。
+ *   3–8 岁阶段，答错本身已经是负反馈，立刻判负会让孩子不敢尝试。
  */
 
 import { h } from '../core/dom.js';
@@ -58,18 +59,27 @@ export default {
 
     function pick(index) {
       if (answered) return;
-      answered = true;
-      const correct = index === quiz.a;
+      const btn = buttons[index];
 
-      buttons.forEach((btn, i) => {
-        btn.classList.add('locked');
-        if (i === quiz.a) btn.classList.add('right');
-        else if (i === index) btn.classList.add('wrong');
-        else btn.classList.add('dim');
+      // 点错：只把这一项轻轻摇头并禁用，鼓励孩子继续试，不结束、不记录失败
+      if (index !== quiz.a) {
+        if (btn.classList.contains('missed')) return;
+        btn.classList.add('wrong', 'missed');
+        btn.setAttribute('aria-disabled', 'true');
+        if (typeof api.misstep === 'function') api.misstep();
+        return;
+      }
+
+      // 答对：锁定全部，正确项变绿，未试过的干扰项变暗，错过的项保留浅红
+      answered = true;
+      buttons.forEach((b, i) => {
+        b.classList.add('locked');
+        if (i === quiz.a) b.classList.add('right');
+        else if (!b.classList.contains('missed')) b.classList.add('dim');
       });
 
       api.onAnswer({
-        correct,
+        correct: true,
         detail: { picked: index, answer: quiz.a, answerText: quiz.opts[quiz.a] },
       });
     }

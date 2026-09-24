@@ -2,8 +2,10 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
+<base href="../">
 <title>题型渲染截图</title>
-<link rel="stylesheet" href="../src/styles.css">
+<link rel="stylesheet" href="src/styles.css">
+<link rel="stylesheet" href="src/styles-kids.css">
 <style>
   #stage { max-width: 860px; margin: 0 auto; padding: 16px; }
   /* 截图专用：无头 Chrome 的 --virtual-time-budget 不推进 CSS 动画时钟，
@@ -18,6 +20,7 @@
 <script type="module">
 /* 只为截图：直接 import 应用模块、同步渲染，不走 hash 导航、不用 iframe */
 import { createStore } from '../src/core/store.js';
+import { createSpeech } from '../src/core/speech.js';
 import { renderCard } from '../src/ui/card.js';
 import { openQuiz } from '../src/ui/quiz.js';
 import { findItem } from '../src/data/index.js';
@@ -26,7 +29,11 @@ const itemId = new URLSearchParams(location.search).get('item') || 'english-colo
 const pick = new URLSearchParams(location.search).get('pick');   // 需要预先点中的左列项
 
 const stage = document.getElementById('stage');
-const speech = { supported: false, speak: () => false, stop: () => {} };
+/* 用**真实**的 speech 模块，不要手写桩。
+   手写桩会随 UI 依赖面扩大而腐坏：card.js 后来加了 speech.onStateChange，
+   而桩里只有 stop/speak —— 整页在 renderCard 里抛异常、#stage 全空，
+   但 dump-dom 看不出来，只有截图是白的。 */
+const speech = createSpeech();
 const store = createStore();
 
 const hit = findItem(itemId);
@@ -35,7 +42,9 @@ renderCard({
   go: () => {},
   openQuiz: (it) => openQuiz({ item: it, store, speech, onHome: () => {}, onNext: () => {} }),
 });
-document.querySelector('[data-quiz]').click();
+/* 打开答题。选择器要跟 card.js 走 —— 原来是 [data-quiz]，后来改成了 .book-quiz，
+   旧的查不到就 null.click() 直接抛异常，整页白屏而 dump-dom 里看不出原因。 */
+document.querySelector('.book-quiz').click();
 
 if (pick) {
   const cols = document.querySelectorAll('.match-col');

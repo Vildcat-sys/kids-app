@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<!-- 放在 .preview/ 下，但课程内部用的是相对项目根的路径（src/images/...）。
+     加 <base> 把基准指回根目录，图片和样式才找得到。 -->
+<base href="../">
+<title>shot-lesson</title>
+<link rel="stylesheet" href="src/styles.css">
+<link rel="stylesheet" href="src/styles-kids.css">
+<style>
+  /* 关掉全部动画：--virtual-time-budget 不推进 CSS 动画时钟，
+     不关的话入场动画会永远停在 opacity:0，截出来一片空白 */
+  * { animation: none !important; transition: none !important; }
+  body { margin: 0; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script type="module">
+/* 注意：模块说明符必须以 ./ 开头 —— 写成 'src/...' 会被当成裸模块名而报错。
+   带 ./ 时按 <base> 解析，正好落到项目根。 */
+import { createStore } from '../src/core/store.js';
+import { createSpeech } from '../src/core/speech.js';
+import { renderLesson } from '../src/ui/lesson.js';
+import { findItem } from '../src/data/index.js';
+
+const params = new URLSearchParams(location.search);
+const itemId = params.get('item') || 'science-shadow';
+/* 目标步骤：一路「下一步」直到停在 data-step === at 的那一步 */
+const at = params.get('at') || 'explore';
+
+const hit = findItem(itemId);
+if (!hit) {
+  document.body.textContent = '找不到知识点：' + itemId;
+} else {
+  const scratch = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
+  const store = createStore({ storage: scratch });
+
+  /* 用真实 speech 模块，不要手写桩 —— 手写桩会随 UI 依赖面扩大而腐坏。
+     headless 里 speechSynthesis 不支持，真模块本身就是安静的。 */
+  const speech = createSpeech();
+
+  const app = document.getElementById('app');
+  renderLesson({
+    container: app,
+    item: hit.item,
+    topic: hit.topic,
+    store,
+    speech,
+    go: () => {},
+  });
+
+  /* 一步一步往前走：每一步只做「当前这一步」需要的操作。
+     选项类点第一个选项；清单类全部勾上；其余点主按钮。 */
+  function autoStep() {
+    const next = document.querySelector('.lesson-next');
+    const opt = document.querySelector('.lesson-opt:not(:disabled)');
+    if (opt && (!next || next.disabled)) { opt.click(); return true; }
+    const checks = Array.from(document.querySelectorAll('.lesson-check:not(.done)'));
+    if (checks.length) { checks.forEach((c) => c.click()); return true; }
+    if (next && !next.disabled) { next.click(); return true; }
+    return false;
+  }
+
+  const root = app.querySelector('.lesson');
+  let guard = 0;
+  const timer = setInterval(() => {
+    const now = root && root.getAttribute('data-step');
+    if (now === at || guard++ > 60 || !autoStep()) {
+      clearInterval(timer);
+      document.title = 'READY ' + (now || '?');
+    }
+  }, 25);
+}
+</script>
+</body>
+</html>

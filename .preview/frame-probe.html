@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>frame-probe</title>
+<style>
+  body { margin: 0; background: #fff; font: 13px/1.5 monospace; }
+  iframe { border: 0; display: block; }
+  #report { padding: 8px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<!--
+  窄屏量测包装页。
+  为什么需要它：Chrome headless 有最小视口宽度（约 485px），
+  --window-size=390 时真实 clientWidth 仍是 485，但 --screenshot 只输出 390 宽的图
+  → 右侧被裁，看起来像「移动端布局溢出」，纯属假象。
+  用 iframe 固定真实宽度，再截外层 600px 窗口，量到的才是真的。
+  用法：frame-probe.html?src=shot-lesson.html&at=explore&w=375&h=1200
+-->
+<div id="report">waiting…</div>
+<iframe id="f"></iframe>
+<script>
+const p = new URLSearchParams(location.search);
+const inner = p.get('src') || 'shot-lesson.html';
+const w = Number(p.get('w') || 375);
+const h = Number(p.get('h') || 1200);
+
+/* 除 src/w/h 之外的全部参数原样透传给被测页 */
+const passthrough = new URLSearchParams(p);
+passthrough.delete('src'); passthrough.delete('w'); passthrough.delete('h');
+
+/* quiet=1：只截图用，隐藏量测报告、去掉外边距 */
+if (p.get('quiet') === '1') {
+  document.getElementById('report').style.display = 'none';
+  document.body.style.background = '#FFFBF5';
+}
+
+const f = document.getElementById('f');
+f.style.width = w + 'px';
+f.style.height = h + 'px';
+f.src = inner + (passthrough.toString() ? '?' + passthrough.toString() : '');
+
+f.addEventListener('load', () => {
+  /* 等被测页自己的定时器把状态推进到位 */
+  setTimeout(() => {
+    try {
+      const d = f.contentDocument;
+      const win = f.contentWindow;
+      const de = d.documentElement;
+      const offenders = [];
+      for (const el of d.body.querySelectorAll('*')) {
+        const cs = win.getComputedStyle(el);
+        // 横向滚动容器是有意为之（宽表），不算溢出
+        if (cs.overflowX === 'auto' || cs.overflowX === 'scroll') continue;
+        if (el.scrollWidth > el.clientWidth + 1) {
+          offenders.push(
+            el.tagName.toLowerCase() +
+            (el.className ? '.' + String(el.className).split(' ').join('.') : '') +
+            '  ' + el.scrollWidth + ' > ' + el.clientWidth
+          );
+        }
+      }
+      document.getElementById('report').textContent = JSON.stringify({
+        viewport: de.clientWidth,
+        docScrollWidth: de.scrollWidth,
+        pageOverflow: de.scrollWidth > de.clientWidth + 1,
+        offenderCount: offenders.length,
+        offenders: offenders.slice(0, 12),
+        step: (d.querySelector('.lesson') || {}).getAttribute
+          ? d.querySelector('.lesson').getAttribute('data-step') : null,
+      }, null, 1);
+    } catch (err) {
+      document.getElementById('report').textContent = 'PROBE ERR ' + err.message;
+    }
+  }, 3000);
+});
+</script>
+</body>
+</html>

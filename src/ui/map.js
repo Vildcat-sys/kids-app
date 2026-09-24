@@ -29,8 +29,8 @@
  */
 
 import { h, render, scrollTop } from '../core/dom.js';
-import { getGroupsForAge } from '../data/index.js';
-import { renderAgeBar } from './age-bar.js';
+import { SECTIONS, topicsOfSection, LEVEL_ALL } from '../data/index.js';
+import { renderLevelBar } from './level-bar.js';
 
 /* ---------- 版面常量 ---------- */
 
@@ -275,23 +275,30 @@ export function isleSvg(topic, store) {
  * @param {(hash: string) => void} ctx.go
  */
 export function renderMap({ container, store, prefs, go }) {
-  const band = prefs.ageBand();
-  const groups = getGroupsForAge(band);
+  const level = prefs.level();
 
-  /* 总览。分母跟着档位走，与首页、顶栏保持一致。 */
+  /* 地图按**板块**分组（原来按 4 个主题分组）。
+     规划中的板块没有内容，不在地图上占位 —— 地图是进度视图，
+     没有进度可看的位置只会让人以为加载失败。 */
+  const groups = SECTIONS.map((sec) => ({
+    ...sec,
+    topics: topicsOfSection(sec.id, level),
+  })).filter((g) => g.topics.length > 0);
+
+  /* 总览。分母跟着级别走，与首页、顶栏保持一致。 */
   const total = groups.reduce((s, g) => s + g.topics.reduce((n, t) => n + t.items.length, 0), 0);
   const done = groups.reduce(
     (s, g) => s + g.topics.reduce((n, t) => n + t.items.filter((i) => store.has(i.id)).length, 0),
     0
   );
-  // 复习计数 —— 按当前档位过滤，只算在当前档看得到的已点亮项
+  // 复习计数 —— 按当前级别过滤，只算在当前级别下看得到的已点亮项
   const visibleLearned = groups.flatMap((g) => g.topics.flatMap((t) => t.items)).filter((i) => store.has(i.id));
   const reviewCount = visibleLearned.filter((i) => store.needsReview(i.id)).length;
   const pct = total === 0 ? 0 : Math.round((done / total) * 100);
 
   const headline =
     total === 0
-      ? '这个年龄还没有内容'
+      ? '这个级别还没有内容'
       : done === 0
         ? '地图上还没有点亮的地方'
         : done >= total
@@ -322,7 +329,7 @@ export function renderMap({ container, store, prefs, go }) {
       : null
   );
 
-  const sections = groups.map((group) => {
+  const blocks = groups.map((group) => {
     const gTotal = group.topics.reduce((n, t) => n + t.items.length, 0);
     const gDone = group.topics.reduce(
       (n, t) => n + t.items.filter((i) => store.has(i.id)).length,
@@ -380,9 +387,23 @@ export function renderMap({ container, store, prefs, go }) {
   const root = h(
     'div',
     { class: 'wrap' },
-    renderAgeBar({ current: band, onPick: (b) => prefs.setAgeBand(b) }),
+    renderLevelBar({ current: level, onPick: (lv) => prefs.setLevel(lv) }),
     overview,
-    sections.length ? sections : h('p', { class: 'map-hint' }, '换个年龄看看？'),
+    blocks.length
+      ? blocks
+      : h(
+          'p',
+          { class: 'map-hint' },
+          h(
+            'button',
+            {
+              class: 'lv-empty-btn',
+              type: 'button',
+              onClick: () => prefs.setLevel(LEVEL_ALL),
+            },
+            '这个级别下没有内容，看全部级别'
+          )
+        ),
     hint
   );
 

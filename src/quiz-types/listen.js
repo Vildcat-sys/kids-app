@@ -62,7 +62,9 @@ export default {
     const buttons = [];
 
     function play() {
-      api.speak(quiz.word, { lang: 'en-US', rate: 0.78 });
+      // 优先播放随包内置的单词录音（统一温柔女声），缺失时由语音层兜底 TTS
+      if (typeof api.sayWord === 'function') api.sayWord(quiz.word);
+      else api.speak(quiz.word, { lang: 'en-US', rate: 0.78 });
     }
 
     const playBtn = h(
@@ -74,18 +76,26 @@ export default {
 
     function pick(index) {
       if (answered) return;
-      answered = true;
-      const correct = index === quiz.a;
+      const btn = buttons[index];
 
-      buttons.forEach((btn, i) => {
-        btn.classList.add('locked');
-        if (i === quiz.a) btn.classList.add('right');
-        else if (i === index) btn.classList.add('wrong');
-        else btn.classList.add('dim');
+      // 选错：轻摇并禁用这一项，可继续听、继续选，不结束不记录
+      if (index !== quiz.a) {
+        if (btn.classList.contains('missed')) return;
+        btn.classList.add('wrong', 'missed');
+        btn.setAttribute('aria-disabled', 'true');
+        if (typeof api.misstep === 'function') api.misstep();
+        return;
+      }
+
+      answered = true;
+      buttons.forEach((b, i) => {
+        b.classList.add('locked');
+        if (i === quiz.a) b.classList.add('right');
+        else if (!b.classList.contains('missed')) b.classList.add('dim');
       });
 
       api.onAnswer({
-        correct,
+        correct: true,
         detail: { picked: index, answer: quiz.a, word: quiz.word, zh: quiz.zh },
       });
     }
@@ -116,7 +126,7 @@ export default {
     return {
       el,
       destroy() {
-        api.speak('', {});
+        if (typeof api.stop === 'function') api.stop();
       },
     };
   },
