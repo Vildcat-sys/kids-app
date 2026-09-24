@@ -136,7 +136,7 @@ function tone(freq, start, dur = 0.15, type = 'triangle', peak = 0.08) {
   osc.type = type;
   osc.frequency.setValueAtTime(freq, t0);
   gain.gain.setValueAtTime(0.0001, t0);
-  gain.exponentialRampToValueAtTime(peak, t0 + 0.012);
+  gain.gain.exponentialRampToValueAtTime(peak, t0 + 0.012);
   gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
   osc.connect(gain);
   gain.connect(ctx.destination);
@@ -334,7 +334,16 @@ export default {
         later(() => showEgg(), 300);
       };
 
-      // 蛋落下消失（WAAPI translateY + fade out）
+      // 蛋落下消失（WAAPI translateY + fade out）。
+      // onfinish 与 700ms 兜底二选一、advanced 幂等：即使个别 WebView 不触发
+      // onfinish，也必定推进且只推进一次，不会把整题卡死。
+      let advanced = false;
+      const go = () => {
+        if (advanced) return;
+        advanced = true;
+        if (wrap) wrap.remove();
+        advance();
+      };
       if (wrap && typeof wrap.animate === 'function') {
         const anim = wrap.animate(
           [
@@ -343,10 +352,10 @@ export default {
           ],
           { duration: 480, easing: 'ease-in', fill: 'forwards' }
         );
-        anim.onfinish = () => { wrap.remove(); advance(); };
+        anim.onfinish = go;
+        later(go, 700);
       } else {
-        if (wrap) wrap.remove();
-        advance();
+        go();
       }
     }
 
