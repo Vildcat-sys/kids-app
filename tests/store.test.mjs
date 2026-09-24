@@ -8,7 +8,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { createStore } from '../src/core/store.js';
+import { createStore, CURRENT_VERSION_FOR_TEST } from '../src/core/store.js';
 
 /** 最小内存 storage 实现，行为对齐 Web Storage */
 function memoryStorage(seed) {
@@ -359,10 +359,11 @@ test('v3 老数据无损迁移：learned 保留，新字段给安全默认', () 
   assert.equal(store.getStreak(), 0);
   assert.equal(store.totalStars(), 0);
 
-  // 触发一次写盘，确认落盘后 state.v 升到 4（迁移无损、进度不清零）
+  // 触发一次写盘，确认落盘后 state.v 升到当前版本（迁移无损、进度不清零）
+  // 用 CURRENT_VERSION_FOR_TEST 而不是硬编码数字 —— 以后升版本不必再改这条断言
   store.addCoins(1);
   const persisted = JSON.parse(storage.getItem(KEY));
-  assert.equal(persisted.v, 4);
+  assert.equal(persisted.v, CURRENT_VERSION_FOR_TEST);
   assert.deepEqual(persisted.learned, ['a', 'b'], '落盘后 learned 仍在');
 });
 
@@ -453,4 +454,93 @@ test('reset 同时清空徽章与今日金币计数', () => {
   assert.deepEqual(store.badgeIds(), []);
   assert.equal(store.coinsToday(), 0);
   assert.equal(store.getCoins(), 0);
+});
+/* ---------- v4 → v5：作品墙 works ---------- */
+
+test('v4 老数据迁移：字段一个不丢，works 为空，版本升到 5', () => {
+  const v4 = {
+    v: 4,
+    learned: ['science-tooth'],
+    learnedAt: { 'science-tooth': 1000 },
+    attempts: { 'science-tooth': { done: 1, right: 1 } },
+    correct: { 'science-tooth': { right: 1 } },
+    stars: { 'science-tooth': 3 },
+    coins: 50,
+    coinsToday: 10,
+    coinsDay: 1,
+    lastDay: '2026-01-01',
+    streak: 2,
+    badges: ['b1'],
+  };
+  const storage = memoryStorage({ [KEY]: JSON.stringify(v4) });
+  const store = createStore({ storage });
+  store.touchLearned('science-tooth'); // 触发 persist，normalize 的 v5 才落盘
+  const dump = JSON.parse(storage._dump()[KEY]);
+  assert.equal(dump.v, 5);
+  assert.deepEqual(dump.learned, ['science-tooth']);
+  assert.equal(dump.coins, 50);
+  assert.equal(dump.streak, 2);
+  assert.deepEqual(dump.badges, ['b1']);
+  assert.equal(dump.stars['science-tooth'], 3);
+  assert.ok(dump.learnedAt['science-tooth']);
+  assert.deepEqual(dump.works, []);
+});
+
+test('addWork：写入能读回，id/ts 自动补全', () => {
+  const store = createStore({ storage: memoryStorage(), now: () => 5000 });
+  const w = store.addWork({ itemId: 'science-tooth', itemName: '牙齿', stars: 3, correct: 2, total: 3 });
+  assert.ok(w.id.startsWith('w-science-tooth-'));
+  assert.equal(w.ts, 5000);
+  assert.equal(store.workCount(), 1);
+  assert.equal(store.works()[0].itemName, '牙齿');
+});
+
+test('works：按 ts 倒序，新的在前', () => {
+  let t = 1000;
+  const store = createStore({ storage: memoryStorage(), now: () => t });
+  t = 1000; store.addWork({ itemId: 'a' });
+  t = 2000; store.addWork({ itemId: 'b' });
+  t = 3000; store.addWork({ itemId: 'c' });
+  assert.deepEqual(store.works().map((x) => x.itemId), ['c', 'b', 'a']);
+});
+
+test('works：超过 200 只留最新 200，弃最旧 5 条', () => {
+  let t = 1;
+  const store = createStore({ storage: memoryStorage(), now: () => t });
+  for (let i = 0; i < 205; i += 1) { t = i + 1; store.addWork({ itemId: 'it-' + i }); }
+  assert.equal(store.workCount(), 200);
+  const ids = store.works().map((x) => x.itemId);
+  assert.ok(ids.includes('it-204'), '最新的保留');
+  assert.ok(!ids.includes('it-0') && !ids.includes('it-4'), '最旧5条丢弃');
+});
+
+test('normalize：works 脏数据被丢弃或夹紧，不抛错', () => {
+  const dirty = {
+    v: 5,
+    works: [
+      { id: 'ok', itemId: 'x', ts: 100, stars: 2, pickedFact: null },
+      { itemId: 'x', ts: 100 },
+      { id: 'bad-ts', itemId: 'x', ts: 'abc' },
+      { id: 'bad-fact', itemId: 'x', ts: 100, pickedFact: 9 },
+      'not-an-object',
+    ],
+  };
+  const store = createStore({ storage: memoryStorage({ [KEY]: JSON.stringify(dirty) }) });
+  const ws = store.works();
+  assert.equal(ws.length, 1);
+  assert.equal(ws[0].id, 'ok');
+
+  const store2 = createStore({ storage: memoryStorage(), now: () => 1 });
+  assert.equal(store2.addWork({ itemId: 'y', stars: 99 }).stars, 3);
+  assert.equal(store2.addWork({ itemId: 'z', stars: -5 }).stars, 1);
+});
+
+test('worksDueForVisit：只返回超期且未见过的', () => {
+  let t = 1000;
+  const store = createStore({ storage: memoryStorage(), now: () => t });
+  const w = store.addWork({ itemId: 'old' });
+  t = 1000 + 4 * 24 * 60 * 60 * 1000;
+  assert.equal(store.worksDueForVisit(3).length, 1);
+  store.markWorkSeen(w.id);
+  assert.equal(store.worksDueForVisit(3).length, 0);
 });

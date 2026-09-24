@@ -1081,3 +1081,138 @@
   font-size: 15px;
   animation: gbPop .5s ease;
 }
+
+/* ════════════════════════════════════════════════════════════════
+   作品墙 + 成就卡 + 反馈降级链（wc = work card / works = 作品墙）
+   复用 :root 变量，尺度对齐 .lesson-report；全部为原创视觉。
+   ════════════════════════════════════════════════════════════════ */
+
+.lesson-wc-slot { width: 100%; margin-top: 16px; display: flex; justify-content: center; }
+
+/* ---------- 成就卡：三段式 ---------- */
+.wc-card {
+  width: 100%; max-width: 460px;
+  display: flex; flex-direction: column; text-align: center;
+  background: linear-gradient(180deg, #FFFDF9, #FFF7EE);
+  border: 2px solid var(--line-2); border-radius: var(--r-lg);
+  overflow: hidden; box-shadow: var(--sh);
+}
+.wc-top {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 12px 18px; background: var(--brand-wash);
+  border-bottom: 1.5px dashed var(--line-2);
+}
+.wc-mascot { width: 42px; height: 42px; border-radius: 50%; border: 2.5px solid #fff; background: #fff; box-shadow: var(--sh); }
+.wc-top-title { font-size: 15px; font-weight: 800; color: var(--brand-deep); letter-spacing: .5px; }
+
+.wc-mid { display: flex; flex-direction: column; gap: 9px; padding: 18px; }
+.wc-item { font-size: 21px; font-weight: 800; color: var(--ink); }
+.wc-meta { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12.5px; color: var(--ink2); }
+.wc-dot { color: var(--ink3); }
+
+.wc-stars { display: flex; align-items: center; justify-content: center; gap: 7px; }
+.wc-star { width: 27px; height: 27px; }
+.wc-star svg { width: 100%; height: 100%; display: block; }
+.wc-off { color: var(--line-2); }
+.wc-on { color: #F4B23A; filter: drop-shadow(0 2px 3px rgba(244,178,58,.4)); }
+
+.wc-feedback {
+  font-size: 13px; line-height: 1.55; color: var(--ink2);
+  background: var(--cream-wash); border: 1px solid var(--line);
+  border-radius: 14px; padding: 9px 12px;
+}
+.wc-picked {
+  display: flex; gap: 6px; align-items: flex-start; text-align: left;
+  font-size: 13.5px; line-height: 1.55; color: var(--ink);
+}
+.wc-picked strong { flex: none; color: var(--brand-deep); font-weight: 800; }
+.wc-picked.wc-empty {
+  display: block; text-align: center; color: var(--ink2);
+  border: 2px dashed var(--line-2); border-radius: 14px; padding: 11px;
+}
+
+/* ---------- 家长回路（一级反馈，非阻塞） ---------- */
+.wc-parent { display: flex; flex-direction: column; gap: 8px; padding: 0 18px; }
+.wc-parent-btn {
+  align-self: center; cursor: pointer;
+  border: 1.5px solid var(--accent); background: #fff; color: var(--accent);
+  border-radius: 999px; padding: 9px 20px; font-size: 14px; font-weight: 700;
+}
+.wc-parent-btn:active { transform: scale(.97); }
+.wc-parent-panel {
+  text-align: left; background: var(--brand-wash);
+  border: 1.5px solid var(--line-2); border-radius: 16px; padding: 13px 15px;
+}
+.wc-parent-panel[hidden] { display: none; }
+.wc-parent-title { margin: 0 0 6px; font-size: 14px; font-weight: 800; color: var(--brand-deep); }
+.wc-parent-body { margin: 0 0 10px; font-size: 12.5px; line-height: 1.65; color: var(--ink); }
+.wc-heard-btn {
+  cursor: pointer; border: none; background: var(--ok); color: #fff;
+  border-radius: 999px; padding: 8px 22px; font-size: 13.5px; font-weight: 700;
+}
+.wc-heard {
+  align-self: center; font-size: 13px; font-weight: 700;
+  color: var(--ok); background: var(--ok-wash);
+  border: 1.5px solid var(--ok); border-radius: 999px; padding: 7px 18px;
+}
+
+.wc-foot {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line);
+  font-size: 12px; color: var(--ink2);
+}
+.wc-foot-sep { color: var(--ink3); }
+
+.wc-compact .wc-mid { padding: 14px; gap: 7px; }
+.wc-compact .wc-item { font-size: 18px; }
+.wc-compact .wc-parent { padding: 0 14px; }
+.wc-compact .wc-top { padding: 9px 14px; }
+
+/* ---------- 作品墙页面 ---------- */
+.works-head { margin: 6px 0 16px; }
+.works-title { margin: 0; font-size: 24px; color: var(--ink); }
+.works-sub { margin: 4px 0 0; font-size: 14px; color: var(--ink2); }
+
+.works-visit {
+  display: flex; flex-direction: column; gap: 12px; align-items: center;
+  margin-bottom: 20px; padding: 18px;
+  background: var(--brand-wash); border: 2px dashed var(--accent);
+  border-radius: var(--r-lg);
+}
+.works-visit-q { margin: 0; font-size: 16px; font-weight: 800; color: var(--brand-deep); }
+.works-visit-btn {
+  cursor: pointer; border: none; background: var(--accent); color: #fff;
+  border-radius: 999px; padding: 10px 28px; font-size: 15px; font-weight: 700;
+  box-shadow: 0 6px 14px rgba(232,115,74,.3);
+}
+.works-visit .wc-card { max-width: 420px; }
+
+.works-grid {
+  display: grid; gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+.works-grid .wc-card { max-width: none; margin: 0 auto; }
+
+.works-empty {
+  display: flex; flex-direction: column; gap: 14px; align-items: center;
+  padding: 48px 20px; text-align: center;
+}
+.works-empty p { margin: 0; font-size: 15px; color: var(--ink2); }
+.works-home-btn {
+  cursor: pointer; border: none; background: var(--accent); color: #fff;
+  border-radius: 999px; padding: 11px 30px; font-size: 15px; font-weight: 700;
+}
+
+/* ---------- 首页：我的作品墙入口（尺度对齐 .map-quest） ---------- */
+.home-works-quest {
+  display: flex; align-items: center; gap: 14px; width: 100%;
+  margin-top: 14px; padding: 16px 18px; text-align: left; cursor: pointer;
+  border-radius: 20px; border: 1.5px solid var(--line-2);
+  background: linear-gradient(118deg, var(--ok-wash), #E9F7EF);
+  box-shadow: 0 6px 18px rgba(45,42,38,.06);
+}
+.home-works-quest:active { transform: scale(.99); }
+.home-works-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.home-works-title { font-size: 17px; font-weight: 700; color: var(--ink); }
+.home-works-sub { font-size: 13px; color: var(--ink2); }
+.home-works-arrow { flex: none; font-size: 22px; font-weight: 700; color: var(--ok); }

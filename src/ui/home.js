@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ui/home.js — 首页：七大内容板块
  *
  * 设计取向（面向 3–8 岁，大图少字）：
@@ -186,6 +186,21 @@ export function renderHome({ container, store, prefs, speech, go }) {
     h('span', { class: 'map-quest-arrow' }, '→')
   );
 
+  const worksEntry = h(
+    'button',
+    {
+      class: 'home-works-quest',
+      type: 'button',
+      onClick: () => { tap(); go('#/works'); },
+      'aria-label': '打开我的作品墙',
+    },
+    h('span', { class: 'home-works-body' },
+      h('span', { class: 'home-works-title' }, '我的作品墙'),
+      h('span', { class: 'home-works-sub' }, '看看我做过什么')
+    ),
+    h('span', { class: 'home-works-arrow' }, '→')
+  );
+
   render(
     container,
     h(
@@ -213,7 +228,8 @@ export function renderHome({ container, store, prefs, speech, go }) {
       renderLevelBar({ current: level, onPick: pick, prominent: needsAsk, withCount: true }),
       h('div', { class: 'land-section-title' }, '选一个方向开始吧'),
       cards,
-      mapEntry
+      mapEntry,
+      worksEntry
     )
   );
 

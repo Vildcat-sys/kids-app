@@ -28,7 +28,8 @@
 //     重播、探究大图舞台 contain 居中不裁切（.lesson-stage/.lesson-demo）、大图热点呼吸光圈、
 //     未完成推进给温柔提示、竖屏禁横向溢出。改了 lesson.js 与 styles-kids.css，缓存版本号 +1。
 // v17：v5 全库水彩手绘绘本风 + 跟读复述改造 + 手绘奇奇 logo；改了 lesson.js 文案，缓存版本号 +1。
-const CACHE = 'kids-encyclopedia-v17';
+// v18：作品墙 + 成就卡 + 反馈降级链——新增 ui/work-card.js、ui/works.js，改 lesson/home/main/styles。
+const CACHE = 'kids-encyclopedia-v18';
 
 const ASSETS = [
   './',
@@ -59,6 +60,8 @@ const ASSETS = [
   './src/ui/book-library.js',
   './src/ui/level-bar.js',
   './src/ui/module-map.js',
+  './src/ui/work-card.js',
+  './src/ui/works.js',
 
   './src/quiz-types/index.js',
   './src/quiz-types/choice.js',

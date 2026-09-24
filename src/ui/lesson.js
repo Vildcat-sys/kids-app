@@ -30,6 +30,8 @@ import { buildLesson, lessonSteps, LESSON_PHASES } from '../data/lessons.js';
 import { getArt } from '../art/index.js';
 import { getQuizType } from '../quiz-types/index.js';
 import { createStars, celebrate } from './reward.js';
+import { createWorkCard, renderPickedFactPicker } from './work-card.js';
+import { sectionOfItem } from '../data/index.js';
 
 const MASCOT_SRC = 'src/images/mascot/lion-wave.webp';
 const BOOK_DIR = 'src/images/book';
@@ -107,6 +109,7 @@ export function renderLesson({ container, item, topic, store, speech, go }) {
   };
 
   let recorder = null;
+  let workCard = null;   // 本次课生成的证据卡（stepReport 里赋值，报告页渲染用）
 
   /* ────────────── 顶部：返回 / 标题 / 阶段条 / 进度 ────────────── */
 
@@ -727,6 +730,17 @@ export function renderLesson({ container, item, topic, store, speech, go }) {
       else store.markLearned(item.id);
       store.setStars(item.id, starCount); // 只升不降
       store.addCoins(coins);
+      const sec = sectionOfItem(item.id);
+      workCard = store.addWork({
+        itemId: item.id,
+        itemName: item.name,
+        sectionId: sec ? sec.id : '',
+        sectionName: sec ? sec.name : '',
+        stars: starCount,
+        correct,
+        total: totalQ,
+        pickedFact: null,
+      });
     }
 
     const stars = createStars();
@@ -737,6 +751,31 @@ export function renderLesson({ container, item, topic, store, speech, go }) {
       { k: '讲述', v: state.teachSpoke ? '完成' : '跟读' },
       { k: '本次星', v: `${starCount} 星` },
     ];
+
+    /* 产物环：fact 提取练习 + 学习证据卡。点选 fact / 家长「听完了」只局部刷新卡片，
+       不整页重渲染（避免重播星星动画）。 */
+    const cardSlot = h('div', { class: 'lesson-wc-slot' });
+    const refreshCard = () => {
+      if (!workCard) return;
+      cardSlot.replaceChildren(
+        createWorkCard(workCard, {
+          facts: item.facts,
+          count: store.workCount(),
+          onHeard: (id) => { store.markWorkHeard(id); refreshCard(); },
+        })
+      );
+    };
+    const factPicker = workCard
+      ? renderPickedFactPicker({
+          work: workCard,
+          facts: item.facts,
+          onPick: (i) => {
+            if (i !== null) store.setWorkPickedFact(workCard.id, i);
+            refreshCard();
+          },
+        })
+      : null;
+    refreshCard();
 
     body.replaceChildren(
       overlay,
@@ -757,7 +796,9 @@ export function renderLesson({ container, item, topic, store, speech, go }) {
           h('span', { class: 'lesson-coin-ico', html: COIN_ICON }),
           h('span', { class: 'lesson-coin-num' }, `+${coins}`)
         )
-      )
+      ),
+      factPicker,
+      cardSlot
     );
 
     foot.replaceChildren(

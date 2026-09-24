@@ -30,10 +30,15 @@
  *   知识点进度（learned / learnedAt / attempts / correct）**全部保留**，新字段
  *   给安全默认值（stars 全 0、coins 0、lastDay 空、streak 0）—— 老用户不必重学，
  *   下次再玩某个知识点时自然开始攒星。STORAGE_KEY 永不换，只升 state.v。
+ *
+ * 关于迁移（v4 -> v5）：
+ *   v5 新增 works：孩子每完成一节课生成一张「学习证据卡」（知识点/星数/答对题数/
+ *   自选一条 fact/回访标记）。老用户（v4）的 learned / stars / coins / streak / badges
+ *   等字段全部保留，works 给空数组 []。STORAGE_KEY 永不换，只升 state.v。
  */
 
 const STORAGE_KEY = 'kids-encyclopedia-progress-v2'; // 见上方「永不换 key」
-const CURRENT_VERSION = 4;
+const CURRENT_VERSION = 5;
 
 /* 每日金币上限：防止连刷刷爆奖励，到顶后 addCoins 返回 0、UI 弹「今日已达上限」。
  * 选 100 是因为一次标准测验约发 10–30 金币，孩子一天正常学 3–5 次正好够用。 */
@@ -110,6 +115,33 @@ function normalize(raw, now = Date.now()) {
     ? [...new Set(safe.badges.filter((x) => typeof x === 'string'))]
     : [];
 
+  /* works（v5）：学习证据卡。逐条校验，任一条不合法整条丢弃；按 ts 倒序、最多 200 条。 */
+  const worksSrc = Array.isArray(safe.works) ? safe.works : [];
+  const works = [];
+  for (const w of worksSrc) {
+    if (!w || typeof w !== 'object') continue;
+    if (typeof w.id !== 'string' || !w.id) continue;
+    if (typeof w.itemId !== 'string' || !w.itemId) continue;
+    if (typeof w.ts !== 'number' || !Number.isFinite(w.ts) || w.ts <= 0) continue;
+    if (!(w.pickedFact === null || (Number.isInteger(w.pickedFact) && w.pickedFact >= 0 && w.pickedFact <= 2))) continue;
+    works.push({
+      id: w.id,
+      itemId: w.itemId,
+      itemName: typeof w.itemName === 'string' ? w.itemName : '',
+      sectionId: typeof w.sectionId === 'string' ? w.sectionId : '',
+      sectionName: typeof w.sectionName === 'string' ? w.sectionName : '',
+      stars: Math.max(1, Math.min(3, Math.round(w.stars || 1))),
+      correct: Math.max(0, Math.round(w.correct || 0)),
+      total: Math.max(0, Math.round(w.total || 0)),
+      pickedFact: w.pickedFact === null ? null : w.pickedFact,
+      ts: w.ts,
+      parentHeard: w.parentHeard === true,
+      seen: w.seen === true,
+    });
+  }
+  works.sort((a, b) => b.ts - a.ts);
+  if (works.length > 200) works.length = 200;
+
   return {
     v: CURRENT_VERSION,
     learned,
@@ -123,6 +155,7 @@ function normalize(raw, now = Date.now()) {
     lastDay,
     streak,
     badges,
+    works,
   };
 }
 
@@ -385,6 +418,90 @@ export function createStore({ storage, now } = {}) {
         const t = state.learnedAt[id];
         return t && clock() - t >= cutoff;
       });
+    },
+
+    /* ─────────────── 学习证据卡（v5 · works） ─────────────── */
+
+    /**
+     * 新增一张学习证据卡。补全 id/ts 后写入，写盘并通知 UI。
+     * @param {object} work {itemId,itemName,sectionId,sectionName,stars,correct,total,pickedFact}
+     * @returns {object} 写入的完整 work 对象
+     */
+    addWork(work) {
+      const w = work && typeof work === 'object' ? work : {};
+      const now = clock();
+      const full = {
+        id: typeof w.id === 'string' && w.id ? w.id : `w-${w.itemId || 'item'}-${now}`,
+        itemId: typeof w.itemId === 'string' ? w.itemId : '',
+        itemName: typeof w.itemName === 'string' ? w.itemName : '',
+        sectionId: typeof w.sectionId === 'string' ? w.sectionId : '',
+        sectionName: typeof w.sectionName === 'string' ? w.sectionName : '',
+        stars: Math.max(1, Math.min(3, Math.round(w.stars || 1))),
+        correct: Math.max(0, Math.round(w.correct || 0)),
+        total: Math.max(0, Math.round(w.total || 0)),
+        pickedFact:
+          Number.isInteger(w.pickedFact) && w.pickedFact >= 0 && w.pickedFact <= 2
+            ? w.pickedFact
+            : null,
+        ts: now,
+        parentHeard: false,
+        seen: false,
+      };
+      state.works.unshift(full);
+      state.works.sort((a, b) => b.ts - a.ts);
+      if (state.works.length > 200) state.works.length = 200;
+      persist();
+      emit();
+      return full;
+    },
+
+    /** 全部作品卡（副本），按 ts 倒序，新的在前 */
+    works() {
+      return state.works.map((w) => ({ ...w }));
+    },
+
+    /** 作品卡数量 */
+    workCount() {
+      return state.works.length;
+    },
+
+    /** 记录孩子自选的一条 fact（下标 0..2）；越界忽略，找不到静默返回 */
+    setWorkPickedFact(workId, i) {
+      if (!Number.isInteger(i) || i < 0 || i > 2) return;
+      const w = state.works.find((x) => x.id === workId);
+      if (!w) return;
+      w.pickedFact = i;
+      persist();
+      emit();
+    },
+
+    /** 一级反馈：家长已听过 */
+    markWorkHeard(workId) {
+      const w = state.works.find((x) => x.id === workId);
+      if (!w) return;
+      w.parentHeard = true;
+      persist();
+      emit();
+    },
+
+    /** 二级反馈：已被回访展示过（同一张卡只回访一次） */
+    markWorkSeen(workId) {
+      const w = state.works.find((x) => x.id === workId);
+      if (!w) return;
+      w.seen = true;
+      persist();
+      emit();
+    },
+
+    /**
+     * 到期该回访的作品卡：ts 早于 days 天前 且 seen 仍为 false，新的在前。
+     * @param {number} [days=3]
+     */
+    worksDueForVisit(days = 3) {
+      const cutoff = clock() - days * 24 * 60 * 60 * 1000;
+      return state.works
+        .filter((w) => w.seen !== true && w.ts < cutoff)
+        .map((w) => ({ ...w }));
     },
 
     /** 订阅状态变化，返回取消订阅函数 */

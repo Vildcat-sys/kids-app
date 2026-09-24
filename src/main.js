@@ -24,6 +24,7 @@ import { renderTopic } from './ui/topic.js';
 import { renderCard } from './ui/card.js';
 import { renderLesson } from './ui/lesson.js';
 import { renderBookLibrary } from './ui/book-library.js';
+import { renderWorks } from './ui/works.js';
 import { openQuiz } from './ui/quiz.js';
 
 import {
@@ -89,6 +90,7 @@ store.subscribe(updateStats);
  *   #/t/<topicId>       领域页（单一领域的完整清单）
  *   #/c/<itemId>        知识点详情页（翻页绘本）
  *   #/lesson/<itemId>   探究课堂（5 阶段 10 步，仅 data/lessons.js 里有的条目）
+ *   #/works           我的作品墙（学习证据卡 + 回访）
  *
  * 级别过滤只作用在「列目录」的三处：首页、地图页、板块页与领域页。
  * 详情页刻意**不按级别过滤** —— 孩子正停在一个知识点上、家长切了级别，
@@ -101,6 +103,7 @@ const TOPIC_RE = /^#\/t\/([a-z-]+)$/;
 const CARD_RE = /^#\/c\/([a-z-]+)$/;
 const LESSON_RE = /^#\/lesson\/([a-z-]+)$/;
 const LIBRARY_RE = /^#\/library$/;
+const WORKS_RE = /^#\/works$/;
 
 function resolve(hash) {
   if (hash === '#/' || hash === '' || hash === '#') return { name: 'home' };
@@ -144,6 +147,10 @@ function resolve(hash) {
     return hit ? { name: 'lesson', item: hit.item, topic: hit.topic } : { name: 'notfound', hash };
   }
 
+  if (hash.match(WORKS_RE)) {
+    return { name: 'works' };
+  }
+
   if (hash.match(LIBRARY_RE)) {
     return { name: 'library' };
   }
@@ -183,6 +190,10 @@ function onChange(route) {
 
     case 'library':
       renderBookLibrary({ container: shell.main, store, speech, go: router.go });
+      break;
+
+    case 'works':
+      renderWorks({ container: shell.main, store, go: router.go });
       break;
 
     case 'module':

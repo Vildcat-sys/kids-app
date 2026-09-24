@@ -16,6 +16,11 @@
  *
  * UI 只调用语义化方法（narrate / ask / sayWord / praise / sfx…），
  * 不关心声音到底来自录音还是 TTS。
+ *
+ * TODO(录音待重录)：PRAISE_TEXT / ENCOURAGE_TEXT 已定为过程性措辞
+ *   （见 docs/工单-作品墙与成就卡与降级链-20260925.md §5.4），
+ *   但 src/audio/voice/ 下 8 个 mp3 仍是旧内容（"你真聪明"）。
+ *   录音重录并替换后，本文件才算真正生效。
  */
 
 const AUDIO_BASE = 'src/audio';
