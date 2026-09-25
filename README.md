@@ -5,14 +5,14 @@
 原生 ES Module，**零构建、零运行时依赖**。既能当网页跑，也能打成 Android APK。
 
 <p align="center">
-  <img src="site/shots/01-home.webp" width="19%" alt="首页：7 个板块" />
-  <img src="site/shots/02-section.webp" width="19%" alt="板块页：S1–S6 阶段" />
-  <img src="site/shots/03-lesson.webp" width="19%" alt="探究课堂" />
-  <img src="site/shots/05-works.webp" width="19%" alt="作品墙" />
-  <img src="site/shots/04-parent.webp" width="19%" alt="家长端" />
+  <img src="docs/shots/01-home.webp" width="19%" alt="首页：7 个板块" />
+  <img src="docs/shots/02-section.webp" width="19%" alt="板块页：S1–S6 阶段" />
+  <img src="docs/shots/03-lesson.webp" width="19%" alt="探究课堂" />
+  <img src="docs/shots/05-works.webp" width="19%" alt="作品墙" />
+  <img src="docs/shots/04-parent.webp" width="19%" alt="家长端" />
 </p>
 
-> 介绍页在 [`site/index.html`](site/index.html)（GitHub Pages 源目录）。
+> 介绍页在 [`docs/index.html`](docs/index.html)（GitHub Pages 源目录）。
 
 ---
 
@@ -110,10 +110,11 @@ kids-app/
 ├── sw.js                      Service Worker，预缓存全部资源
 ├── package.json               无运行时依赖，只有脚本
 │
-├── site/                      ★ 介绍页（GitHub Pages 源目录，不属于应用本体）
+├── docs/                      ★ 文档 + 介绍页（GitHub Pages 源目录，不属于应用本体）
 │   ├── index.html             单文件双语落地页
 │   ├── shots/                 6 张应用截图（390×844 @2x，webp）
-│   └── icon-*.png
+│   ├── icon-*.png
+│   └── *.md                   架构 / 画风 / 贡献指南
 │
 ├── src/
 │   ├── styles.css
