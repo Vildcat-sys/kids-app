@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>小小百科 · 给孩子的第一个百科</title>
+<meta name="description" content="给 3–8 岁孩子的离线早教应用。7 大板块、160 个知识点、1127 张水彩手绘插画，配语音朗读与多题型互动练习。原生 ES Module，零构建零依赖。">
+<meta property="og:title" content="小小百科 · 给孩子的第一个百科">
+<meta property="og:description" content="给 3–8 岁孩子的离线早教应用。160 个知识点、1127 张水彩插画、807 段语音，完全离线可用。">
+<meta property="og:image" content="shots/01-home.webp">
+<meta property="og:type" content="website">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  :root{
+    --bg:#FFFBF5; --bg2:#FDF6EC; --card:#FFFFFF;
+    --ink:#2A2118; --ink2:#6B5D4F; --ink3:#9C8D7C;
+    --line:#F0E6D8; --line2:#F7EFE3;
+    --accent:#E2703A; --accent2:#C4551F; --accentbg:#FDF0E6;
+    --ok:#2F8F5B; --okbg:#EAF7F0;
+    --info:#2E6FA8; --infobg:#EBF3FB;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    --shadow:0 1px 2px rgba(90,60,30,.05), 0 6px 22px rgba(90,60,30,.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#17140F; --bg2:#1E1A14; --card:#211C15;
+      --ink:#F2EBE1; --ink2:#B5A794; --ink3:#8A7D6D;
+      --line:#312A20; --line2:#2A241C;
+      --accent:#F08A55; --accent2:#FFA477; --accentbg:#2A1D12;
+      --ok:#5FC98D; --okbg:#12291C;
+      --info:#7FB4E8; --infobg:#14232F;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 6px 22px rgba(0,0,0,.25);
+    }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--sans); font-size:16px; line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent2); text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 22px}
+  .en{display:none}
+  body[data-lang="en"] .zh{display:none}
+  body[data-lang="en"] .en{display:revert}
+
+  /* ── 顶栏 ── */
+  .top{position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--bg) 88%, transparent);
+       backdrop-filter:saturate(1.6) blur(12px); border-bottom:1px solid var(--line)}
+  .top .wrap{display:flex; align-items:center; gap:14px; height:58px}
+  .brand{display:flex; align-items:center; gap:9px; font-weight:700; font-size:16px; letter-spacing:-.2px; color:var(--ink)}
+  .brand img{width:26px;height:26px;border-radius:7px}
+  .top nav{margin-left:auto; display:flex; align-items:center; gap:20px; font-size:14px}
+  .top nav a{color:var(--ink2)}
+  .top nav a:hover{color:var(--accent2); text-decoration:none}
+  .langsw{display:flex; border:1px solid var(--line); border-radius:8px; overflow:hidden; background:var(--card)}
+  .langsw button{border:0;background:transparent;color:var(--ink2);font:inherit;font-size:13px;padding:5px 11px;cursor:pointer}
+  .langsw button[aria-pressed="true"]{background:var(--ink);color:var(--bg);font-weight:600}
+  @media(max-width:720px){ .top nav a{display:none} }
+
+  /* ── Hero ── */
+  .hero{padding:64px 0 40px}
+  .hero-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:52px; align-items:center}
+  @media(max-width:880px){ .hero-grid{grid-template-columns:1fr; gap:34px} .hero{padding:40px 0 26px} }
+  .pills{display:flex; flex-wrap:wrap; gap:7px; margin-bottom:20px}
+  .pill{font-size:12.5px; padding:4px 11px; border-radius:20px; background:var(--accentbg); color:var(--accent2); font-weight:600}
+  h1{font-size:clamp(34px,5.4vw,52px); line-height:1.14; letter-spacing:-1.2px; margin:0 0 16px; font-weight:800}
+  .lede{font-size:17.5px; color:var(--ink2); margin:0 0 26px; max-width:34em}
+  .lede b{color:var(--ink); font-weight:600}
+  .cta{display:flex; flex-wrap:wrap; gap:11px; margin-bottom:26px}
+  .btn{display:inline-flex; align-items:center; gap:7px; padding:11px 20px; border-radius:10px; font-size:14.5px; font-weight:600;
+       border:1px solid var(--line); background:var(--card); color:var(--ink); box-shadow:var(--shadow); cursor:pointer}
+  .btn:hover{text-decoration:none; border-color:var(--accent)}
+  .btn.pri{background:var(--accent); border-color:var(--accent); color:#fff}
+  .btn.pri:hover{background:var(--accent2); border-color:var(--accent2)}
+  .quick{background:var(--bg2); border:1px solid var(--line); border-radius:11px; padding:13px 16px; font-family:var(--mono); font-size:13px; line-height:1.85}
+  .quick .c{color:var(--ink3)}
+  .phone{width:100%; height:auto; max-width:330px; margin:0 auto; display:block; border-radius:26px; box-shadow:var(--shadow); border:1px solid var(--line)}
+
+  /* ── 数据条 ── */
+  .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:1px; background:var(--line);
+         border:1px solid var(--line); border-radius:13px; overflow:hidden; margin:14px 0 0}
+  .stat{background:var(--card); padding:19px 14px; text-align:center}
+  .stat .n{font-family:var(--mono); font-size:25px; font-weight:700; letter-spacing:-1px; line-height:1.2}
+  .stat .l{font-size:12.5px; color:var(--ink3); margin-top:3px}
+
+  /* ── 章节 ── */
+  section{padding:56px 0 8px}
+  h2{font-size:clamp(22px,3vw,29px); letter-spacing:-.7px; margin:0 0 8px; font-weight:750}
+  .sub{color:var(--ink2); font-size:15.5px; margin:0 0 28px; max-width:44em}
+
+  /* ── 特色卡 ── */
+  .feats{display:grid; grid-template-columns:repeat(auto-fit,minmax(288px,1fr)); gap:16px}
+  .feat{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px 22px 20px; box-shadow:var(--shadow)}
+  .feat .ic{width:36px;height:36px;border-radius:10px;background:var(--accentbg);color:var(--accent2);
+            display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:13px}
+  .feat h3{margin:0 0 7px; font-size:16.5px; letter-spacing:-.2px}
+  .feat p{margin:0; color:var(--ink2); font-size:14.5px; line-height:1.7}
+
+  /* ── 截图墙 ── */
+  .shots{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:16px}
+  .shot{margin:0}
+  .shot img{width:100%; height:auto; aspect-ratio:390/844; object-fit:cover; object-position:top center;
+            display:block; border-radius:15px; border:1px solid var(--line); box-shadow:var(--shadow); background:var(--card)}
+  .shot figcaption{margin-top:8px; font-size:12.5px; color:var(--ink3); text-align:center; line-height:1.5}
+
+  /* 报告页特写：整页最高的一张，单独给一块 */
+  .feature{display:grid; grid-template-columns:.82fr 1.18fr; gap:44px; align-items:center;
+           background:var(--card); border:1px solid var(--line); border-radius:18px;
+           padding:34px; margin-top:18px; box-shadow:var(--shadow)}
+  @media(max-width:820px){ .feature{grid-template-columns:1fr; gap:26px; padding:24px} }
+  .feature img{width:100%; height:auto; max-width:330px; margin:0 auto; display:block; border-radius:20px; border:1px solid var(--line)}
+  .feature h3{margin:0 0 10px; font-size:19px; letter-spacing:-.3px}
+  .feature p{margin:0 0 14px; color:var(--ink2); font-size:14.5px; line-height:1.75}
+  .feature ul{margin:0; padding-left:19px; color:var(--ink2); font-size:14.5px}
+  .feature li{margin-bottom:7px}
+  .feature b{color:var(--ink)}
+
+  /* ── 技术 ── */
+  .tech{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px}
+  .tech .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px; box-shadow:var(--shadow)}
+  .tech h3{margin:0 0 10px; font-size:16px}
+  .tech ul{margin:0; padding-left:19px; color:var(--ink2); font-size:14.5px}
+  .tech li{margin-bottom:7px}
+  .tech code, .quick code{font-family:var(--mono); font-size:12.8px; background:var(--line2); padding:1.5px 5px; border-radius:4px; color:var(--ink)}
+
+  /* ── 表格 ── */
+  .tbl-scroll{overflow-x:auto; border:1px solid var(--line); border-radius:13px; background:var(--card); box-shadow:var(--shadow)}
+  table{border-collapse:collapse; width:100%; font-size:14px; min-width:520px}
+  thead th{text-align:left; font-size:12.5px; color:var(--ink3); font-weight:600; padding:12px 16px;
+           background:var(--bg2); border-bottom:1px solid var(--line); white-space:nowrap}
+  tbody td{padding:11px 16px; border-bottom:1px solid var(--line2); vertical-align:top}
+  tbody tr:last-child td{border-bottom:0}
+  td.mono{font-family:var(--mono); font-size:12.8px; color:var(--ink2)}
+
+  /* ── 结构树 ── */
+  pre.tree{background:var(--bg2); border:1px solid var(--line); border-radius:13px; padding:18px 20px;
+           overflow-x:auto; font-family:var(--mono); font-size:13px; line-height:1.85; margin:0; color:var(--ink2)}
+  pre.tree b{color:var(--ink); font-weight:600}
+  pre.tree i{color:var(--ink3); font-style:normal}
+
+  /* ── 页脚 ── */
+  footer{margin-top:56px; border-top:1px solid var(--line); padding:28px 0 44px; color:var(--ink3); font-size:13.5px}
+  footer .row{display:flex; flex-wrap:wrap; gap:10px 26px; align-items:center}
+  footer a{color:var(--ink2)}
+
+  @media print{
+    .top,.cta,.langsw{display:none}
+    body{background:#fff}
+    section{padding:22px 0 0; break-inside:avoid}
+  }
+</style>
+</head>
+<body data-lang="zh">
+
+<div class="top">
+  <div class="wrap">
+    <span class="brand"><img src="icon-192.png" alt=""> 小小百科</span>
+    <nav>
+      <a href="#features" data-i18n="nav.features">特色</a>
+      <a href="#shots" data-i18n="nav.shots">截图</a>
+      <a href="#tech" data-i18n="nav.tech">技术</a>
+      <a href="#quality" data-i18n="nav.quality">质量</a>
+      <a href="#start" data-i18n="nav.start">开始使用</a>
+    </nav>
+    <span class="langsw" role="group" aria-label="Language">
+      <button type="button" id="btn-zh" aria-pressed="true">中文</button>
+      <button type="button" id="btn-en" aria-pressed="false">EN</button>
+    </span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ══ Hero ══ -->
+  <div class="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="pills">
+          <span class="pill" data-i18n="hero.p1">完全离线</span>
+          <span class="pill" data-i18n="hero.p2">PWA</span>
+          <span class="pill" data-i18n="hero.p3">可打包 Android</span>
+          <span class="pill" data-i18n="hero.p4">零运行时依赖</span>
+        </div>
+        <h1 data-i18n="hero.h1">给孩子的<br>第一个百科</h1>
+        <p class="lede" data-i18n="hero.lede">面向 <b>3–8 岁</b>的离线早教应用。<b>7 大板块</b>、<b>160 个知识点</b>、<b>1127 张水彩手绘插画</b>，配语音朗读与多题型互动练习。不联网、无广告、无账号，进度只存在这台设备里。</p>
+        <div class="cta">
+          <a class="btn pri" href="#start" data-i18n="hero.cta1">快速开始</a>
+          <a class="btn" href="#shots" data-i18n="hero.cta2">看截图</a>
+          <a class="btn" href="#tech" data-i18n="hero.cta3">技术实现</a>
+        </div>
+        <div class="quick">
+          <div><span class="c" data-i18n="hero.c1"># 起一个本地服务（原生 ESM 必须走 http）</span></div>
+          <div>python -m http.server 8765</div>
+          <div><span class="c" data-i18n="hero.c2"># 打开 http://127.0.0.1:8765</span></div>
+        </div>
+      </div>
+      <div>
+        <img class="phone" src="shots/01-home.webp" width="780" height="1688" alt="小小百科首页">
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="n">160</div><div class="l" data-i18n="stat.kp">知识点</div></div>
+      <div class="stat"><div class="n">7</div><div class="l" data-i18n="stat.sec">板块</div></div>
+      <div class="stat"><div class="n">6</div><div class="l" data-i18n="stat.lv">能力阶梯</div></div>
+      <div class="stat"><div class="n">1127</div><div class="l" data-i18n="stat.art">张插画</div></div>
+      <div class="stat"><div class="n">807</div><div class="l" data-i18n="stat.audio">段语音</div></div>
+      <div class="stat"><div class="n">268</div><div class="l" data-i18n="stat.test">条单测</div></div>
+      <div class="stat"><div class="n">6</div><div class="l" data-i18n="stat.gate">道质量闸</div></div>
+    </div>
+  </div>
+
+  <!-- ══ 特色 ══ -->
+  <section id="features">
+    <h2 data-i18n="feat.h2">它和「点一下出个动画」的应用不一样</h2>
+    <p class="sub" data-i18n="feat.sub">每一个交互都要求孩子对内容做一次判断、构造或解释。下面六件事，是这个应用真正的骨架。</p>
+    <div class="feats">
+
+      <div class="feat">
+        <div class="ic">◎</div>
+        <h3 data-i18n="f1.t">五阶段探究课</h3>
+        <p data-i18n="f1.d">一节课走完「引入 → 探究 → 应用 → 表达 → 检验」。不是知识点配一道题，而是一次完整的认知闭环：先制造疑问，再动手找线索，最后讲出来。</p>
+      </div>
+
+      <div class="feat">
+        <div class="ic">▤</div>
+        <h3 data-i18n="f2.t">学习证据卡与作品墙</h3>
+        <p data-i18n="f2.d">每节课产出一张「探索卡」，孩子从 3 条知识里挑一条「我记住了」——没有标准答案。卡片累积成作品墙，几天后系统会把旧卡片拿回来问「你还记得这张吗」。</p>
+      </div>
+
+      <div class="feat">
+        <div class="ic">♪</div>
+        <h3 data-i18n="f3.t">语音朗读与跟读</h3>
+        <p data-i18n="f3.d">807 段语音覆盖绘本逐页朗读、题目、反馈与鼓励。跟读复述只做「自我确认」降级——点一下「我会读了」，<b>不录音、不申请麦克风权限</b>。</p>
+      </div>
+
+      <div class="feat">
+        <div class="ic">◈</div>
+        <h3 data-i18n="f4.t">多题型互动</h3>
+        <p data-i18n="f4.d">听音辨词、配对、排序、选择题之外，还有描红、涂色、打地鼠、砸蛋、实验分支、放大镜点词。题型走统一契约注册，加新题型不需要改 UI。</p>
+      </div>
+
+      <div class="feat">
+        <div class="ic">▦</div>
+        <h3 data-i18n="f5.t">六级能力阶梯</h3>
+        <p data-i18n="f5.d">S1 感知 → S2 辨认 → S3 关联 → S4 理解 → S5 推理 → S6 迁移。按「孩子现在能做到什么」分档，而不是按年龄硬切——拿不准就先看全部。</p>
+      </div>
+
+      <div class="feat">
+        <div class="ic">◐</div>
+        <h3 data-i18n="f6.t">家长面板与反馈降级链</h3>
+        <p data-i18n="f6.d">成长报告只看本机数据，不上传任何地方。反馈分三级：家长真人回应 → 系统回访旧作品 → 结构化自评问题。<b>「问」比「夸」更能让孩子开口。</b></p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══ 截图 ══ -->
+  <section id="shots">
+    <h2 data-i18n="shot.h2">界面</h2>
+    <p class="sub" data-i18n="shot.sub">全部插画为原创水彩手绘，按统一画风规格生成并逐张校验代际一致。</p>
+    <div class="shots">
+      <figure class="shot"><img src="shots/01-home.webp" width="780" height="1688" alt="" loading="lazy"><figcaption data-i18n="s1">首页 · 选一个方向</figcaption></figure>
+      <figure class="shot"><img src="shots/02-section.webp" width="780" height="1688" alt="" loading="lazy"><figcaption data-i18n="s2">板块 · 阶梯与模块</figcaption></figure>
+      <figure class="shot"><img src="shots/03-lesson.webp" width="780" height="1688" alt="" loading="lazy"><figcaption data-i18n="s3">探究课 · 绘本与旁白</figcaption></figure>
+      <figure class="shot"><img src="shots/05-works.webp" width="780" height="1688" alt="" loading="lazy"><figcaption data-i18n="s5">作品墙 · 回访旧卡片</figcaption></figure>
+      <figure class="shot"><img src="shots/04-parent.webp" width="780" height="1688" alt="" loading="lazy"><figcaption data-i18n="s6">家长面板 · 成长报告</figcaption></figure>
+    </div>
+
+    <div class="feature">
+      <img src="shots/06-report.webp" width="780" height="3000" alt="" loading="lazy">
+      <div>
+        <h3 data-i18n="s4.t">一节课结束，留下的不是分数，是一张卡</h3>
+        <p data-i18n="s4.p">报告页不给孩子打分排名，而是把这次学的东西变成一件可以带走的东西。孩子要从三条知识里挑一条「我记住了」——<b>没有标准答案，选哪条都对</b>。</p>
+        <ul>
+          <li data-i18n="s4.a">三段式卡片：固定装饰、孩子的数据、固定落款</li>
+          <li data-i18n="s4.b">卡片进入作品墙，几天后系统拿回来问「你还记得这张吗」</li>
+          <li data-i18n="s4.c">家长可以点「请爸爸妈妈听我讲」，面板里写着该怎么做</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 技术 ══ -->
+  <section id="tech">
+    <h2 data-i18n="tech.h2">技术实现</h2>
+    <p class="sub" data-i18n="tech.sub">没有框架、没有打包器、没有 node_modules 运行时。打开 <code>index.html</code> 就是全部。</p>
+    <div class="tech">
+
+      <div class="card">
+        <h3 data-i18n="t1.t">架构原则</h3>
+        <ul>
+          <li data-i18n="t1.a">原生 ES Module，<b>零构建、零运行时依赖</b></li>
+          <li data-i18n="t1.b">分层依赖只允许 <code>core</code> → <code>ui</code> → <code>data</code> 自上而下</li>
+          <li data-i18n="t1.c">新题型走 <code>src/quiz-types/</code> 契约 <code>{id,name,validate,create}</code></li>
+          <li data-i18n="t1.d">外部依赖一律注入，内容层是纯数据</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3 data-i18n="t2.t">离线优先</h3>
+        <ul>
+          <li data-i18n="t2.a">Service Worker 预缓存全部资源，断网照常用</li>
+          <li data-i18n="t2.b">无后端、无网络请求、无账号、无追踪</li>
+          <li data-i18n="t2.c">进度存 <code>localStorage</code>，带版本迁移与非法数据降级</li>
+          <li data-i18n="t2.d">PWA 可添加到主屏，独立窗口运行</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3 data-i18n="t3.t">打包 Android</h3>
+        <ul>
+          <li data-i18n="t3.a">Capacitor 把 <code>www/</code> 打进 WebView</li>
+          <li data-i18n="t3.b"><code>npm run apk</code> 一键出包</li>
+          <li data-i18n="t3.c">权限只要 <code>INTERNET</code>，不碰麦克风与相机</li>
+          <li data-i18n="t3.d">零原生库，纯 Web 资源 + 极薄壳层</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══ 质量 ══ -->
+  <section id="quality">
+    <h2 data-i18n="q.h2">六道质量闸</h2>
+    <p class="sub" data-i18n="q.sub">内容、行为、可达性、媒体、插画质量、画风代际，各有专门的自动检查。提交前必须全绿。</p>
+    <div class="tbl-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th data-i18n="q.c1">闸门</th>
+            <th data-i18n="q.c2">查什么</th>
+            <th data-i18n="q.c3">当前</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono">validate</td>
+            <td data-i18n="q.r1">内容结构、id 唯一性、题型合法性、答案越界、插画引用、级别完整性</td>
+            <td class="mono">160 / 160</td>
+          </tr>
+          <tr>
+            <td class="mono">test</td>
+            <td data-i18n="q.r2">行为契约单测</td>
+            <td class="mono">268 / 268</td>
+          </tr>
+          <tr>
+            <td class="mono">check:reach</td>
+            <td data-i18n="q.r3">入口可达性 + Service Worker 清单双向核对</td>
+            <td class="mono">166 / 166</td>
+          </tr>
+          <tr>
+            <td class="mono">check:media</td>
+            <td data-i18n="q.r4">磁盘上的媒体文件是否齐全</td>
+            <td class="mono">160 / 160</td>
+          </tr>
+          <tr>
+            <td class="mono">check:art</td>
+            <td data-i18n="q.r5">分辨率、三页互不相同、封面不复用内页、代码引用可达</td>
+            <td class="mono">1127 / 1127</td>
+          </tr>
+          <tr>
+            <td class="mono">check:style</td>
+            <td data-i18n="q.r6">用户可见插画是否统一在同一代画风</td>
+            <td class="mono">637 / 637</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ 开始使用 ══ -->
+  <section id="start">
+    <h2 data-i18n="st.h2">开始使用</h2>
+    <p class="sub" data-i18n="st.sub">只需要 Node 22+ 和 Python 3（Python 仅用来起本地静态服务）。</p>
+
+    <div class="tech">
+      <div class="card">
+        <h3 data-i18n="st.a.t">当网页跑</h3>
+        <pre class="tree"><i data-i18n="st.a.1"># 克隆后进入目录</i>
+cd kids-app
+
+<i data-i18n="st.a.2"># 起本地服务（原生 ESM 必须走 http）</i>
+python -m http.server 8765
+
+<i data-i18n="st.a.3"># 浏览器打开 http://127.0.0.1:8765</i></pre>
+      </div>
+      <div class="card">
+        <h3 data-i18n="st.b.t">打包成 APK</h3>
+        <pre class="tree">npm install
+
+<i data-i18n="st.b.1"># 跑闸门 + 同步到 Android 工程 + 出包</i>
+npm run apk
+
+<i data-i18n="st.b.2"># 产物 android/app/build/outputs/apk/debug/</i></pre>
+      </div>
+      <div class="card">
+        <h3 data-i18n="st.c.t">开发命令</h3>
+        <pre class="tree">npm run check     <i data-i18n="st.c.1"># validate + test，提交前必跑</i>
+npm run check:all <i data-i18n="st.c.2"># 六道闸一次跑完</i>
+npm run www       <i data-i18n="st.c.3"># 生成 www/ 供 Capacitor 使用</i></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 结构 ══ -->
+  <section>
+    <h2 data-i18n="tree.h2">目录结构</h2>
+    <p class="sub" data-i18n="tree.sub">装配层只有一个文件知道谁依赖谁，其余模块只认自己的契约。</p>
+<pre class="tree"><b>kids-app/</b>
+├── index.html            <i data-i18n="tree.a">应用外壳，只负责挂载</i>
+├── sw.js                 <i data-i18n="tree.b">Service Worker，预缓存全部资源</i>
+├── manifest.webmanifest  <i data-i18n="tree.c">PWA 清单</i>
+│
+├── <b>src/</b>
+│   ├── main.js           <i data-i18n="tree.d">装配层：唯一知道谁依赖谁的地方</i>
+│   ├── <b>core/</b>             <i data-i18n="tree.e">DOM 助手、存储、语音、路由、偏好</i>
+│   ├── <b>ui/</b>               <i data-i18n="tree.f">首页、板块、课时、作品墙、家长面板</i>
+│   ├── <b>data/</b>             <i data-i18n="tree.g">九个领域的内容与课程矩阵，纯数据</i>
+│   ├── <b>quiz-types/</b>       <i data-i18n="tree.h">题型契约与各题型实现</i>
+│   ├── <b>art/</b>              <i data-i18n="tree.i">插画注册表（内联 SVG + 图片路径）</i>
+│   └── <b>images/</b>           <i data-i18n="tree.j">水彩插画与吉祥物</i>
+│
+├── <b>tests/</b>                <i data-i18n="tree.k">268 条行为契约单测</i>
+├── <b>tools/</b>                <i data-i18n="tree.l">六道质量闸与构建脚本</i>
+├── <b>docs/</b>                 <i data-i18n="tree.m">架构、画风规格、贡献指南</i>
+└── <b>android/</b>              <i data-i18n="tree.n">Capacitor 生成的 Android 工程</i></pre>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <span data-i18n="ft.1">小小百科 · 给 3–8 岁孩子的离线早教应用</span>
+      <span>·</span>
+      <span data-i18n="ft.2">插画与内容为原创，不包含任何第三方素材</span>
+      <span>·</span>
+      <span data-i18n="ft.3">进度只存在本机，不收集任何数据</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var I18N = {
+    zh: {
+      'nav.features':'特色','nav.shots':'截图','nav.tech':'技术','nav.quality':'质量','nav.start':'开始使用',
+      'hero.p1':'完全离线','hero.p2':'PWA','hero.p3':'可打包 Android','hero.p4':'零运行时依赖',
+      'hero.h1':'给孩子的<br>第一个百科',
+      'hero.lede':'面向 <b>3–8 岁</b>的离线早教应用。<b>7 大板块</b>、<b>160 个知识点</b>、<b>1127 张水彩手绘插画</b>，配语音朗读与多题型互动练习。不联网、无广告、无账号，进度只存在这台设备里。',
+      'hero.cta1':'快速开始','hero.cta2':'看截图','hero.cta3':'技术实现',
+      'hero.c1':'# 起一个本地服务（原生 ESM 必须走 http）','hero.c2':'# 打开 http://127.0.0.1:8765',
+      'stat.kp':'知识点','stat.sec':'板块','stat.lv':'能力阶梯','stat.art':'张插画','stat.audio':'段语音','stat.test':'条单测','stat.gate':'道质量闸',
+      'feat.h2':'它和「点一下出个动画」的应用不一样',
+      'feat.sub':'每一个交互都要求孩子对内容做一次判断、构造或解释。下面六件事，是这个应用真正的骨架。',
+      'f1.t':'五阶段探究课','f1.d':'一节课走完「引入 → 探究 → 应用 → 表达 → 检验」。不是知识点配一道题，而是一次完整的认知闭环：先制造疑问，再动手找线索，最后讲出来。',
+      'f2.t':'学习证据卡与作品墙','f2.d':'每节课产出一张「探索卡」，孩子从 3 条知识里挑一条「我记住了」——没有标准答案。卡片累积成作品墙，几天后系统会把旧卡片拿回来问「你还记得这张吗」。',
+      'f3.t':'语音朗读与跟读','f3.d':'807 段语音覆盖绘本逐页朗读、题目、反馈与鼓励。跟读复述只做「自我确认」降级——点一下「我会读了」，<b>不录音、不申请麦克风权限</b>。',
+      'f4.t':'多题型互动','f4.d':'听音辨词、配对、排序、选择题之外，还有描红、涂色、打地鼠、砸蛋、实验分支、放大镜点词。题型走统一契约注册，加新题型不需要改 UI。',
+      'f5.t':'六级能力阶梯','f5.d':'S1 感知 → S2 辨认 → S3 关联 → S4 理解 → S5 推理 → S6 迁移。按「孩子现在能做到什么」分档，而不是按年龄硬切——拿不准就先看全部。',
+      'f6.t':'家长面板与反馈降级链','f6.d':'成长报告只看本机数据，不上传任何地方。反馈分三级：家长真人回应 → 系统回访旧作品 → 结构化自评问题。<b>「问」比「夸」更能让孩子开口。</b>',
+      'shot.h2':'界面','shot.sub':'全部插画为原创水彩手绘，按统一画风规格生成并逐张校验代际一致。',
+      's1':'首页 · 选一个方向','s2':'板块 · 阶梯与模块','s3':'探究课 · 绘本与旁白','s5':'作品墙 · 回访旧卡片','s6':'家长面板 · 成长报告',
+      's4.t':'一节课结束，留下的不是分数，是一张卡',
+      's4.p':'报告页不给孩子打分排名，而是把这次学的东西变成一件可以带走的东西。孩子要从三条知识里挑一条「我记住了」——<b>没有标准答案，选哪条都对</b>。',
+      's4.a':'三段式卡片：固定装饰、孩子的数据、固定落款',
+      's4.b':'卡片进入作品墙，几天后系统拿回来问「你还记得这张吗」',
+      's4.c':'家长可以点「请爸爸妈妈听我讲」，面板里写着该怎么做',
+      'tech.h2':'技术实现','tech.sub':'没有框架、没有打包器、没有 node_modules 运行时。打开 <code>index.html</code> 就是全部。',
+      't1.t':'架构原则','t1.a':'原生 ES Module，<b>零构建、零运行时依赖</b>','t1.b':'分层依赖只允许 <code>core</code> → <code>ui</code> → <code>data</code> 自上而下','t1.c':'新题型走 <code>src/quiz-types/</code> 契约 <code>{id,name,validate,create}</code>','t1.d':'外部依赖一律注入，内容层是纯数据',
+      't2.t':'离线优先','t2.a':'Service Worker 预缓存全部资源，断网照常用','t2.b':'无后端、无网络请求、无账号、无追踪','t2.c':'进度存 <code>localStorage</code>，带版本迁移与非法数据降级','t2.d':'PWA 可添加到主屏，独立窗口运行',
+      't3.t':'打包 Android','t3.a':'Capacitor 把 <code>www/</code> 打进 WebView','t3.b':'<code>npm run apk</code> 一键出包','t3.c':'权限只要 <code>INTERNET</code>，不碰麦克风与相机','t3.d':'零原生库，纯 Web 资源 + 极薄壳层',
+      'q.h2':'六道质量闸','q.sub':'内容、行为、可达性、媒体、插画质量、画风代际，各有专门的自动检查。提交前必须全绿。',
+      'q.c1':'闸门','q.c2':'查什么','q.c3':'当前',
+      'q.r1':'内容结构、id 唯一性、题型合法性、答案越界、插画引用、级别完整性','q.r2':'行为契约单测','q.r3':'入口可达性 + Service Worker 清单双向核对','q.r4':'磁盘上的媒体文件是否齐全','q.r5':'分辨率、三页互不相同、封面不复用内页、代码引用可达','q.r6':'用户可见插画是否统一在同一代画风',
+      'st.h2':'开始使用','st.sub':'只需要 Node 22+ 和 Python 3（Python 仅用来起本地静态服务）。',
+      'st.a.t':'当网页跑','st.a.1':'# 克隆后进入目录','st.a.2':'# 起本地服务（原生 ESM 必须走 http）','st.a.3':'# 浏览器打开 http://127.0.0.1:8765',
+      'st.b.t':'打包成 APK','st.b.1':'# 跑闸门 + 同步到 Android 工程 + 出包','st.b.2':'# 产物 android/app/build/outputs/apk/debug/',
+      'st.c.t':'开发命令','st.c.1':'# validate + test，提交前必跑','st.c.2':'# 六道闸一次跑完','st.c.3':'# 生成 www/ 供 Capacitor 使用',
+      'tree.h2':'目录结构','tree.sub':'装配层只有一个文件知道谁依赖谁，其余模块只认自己的契约。',
+      'tree.a':'应用外壳，只负责挂载','tree.b':'Service Worker，预缓存全部资源','tree.c':'PWA 清单','tree.d':'装配层：唯一知道谁依赖谁的地方',
+      'tree.e':'DOM 助手、存储、语音、路由、偏好','tree.f':'首页、板块、课时、作品墙、家长面板','tree.g':'九个领域的内容与课程矩阵，纯数据',
+      'tree.h':'题型契约与各题型实现','tree.i':'插画注册表（内联 SVG + 图片路径）','tree.j':'水彩插画与吉祥物',
+      'tree.k':'268 条行为契约单测','tree.l':'六道质量闸与构建脚本','tree.m':'架构、画风规格、贡献指南','tree.n':'Capacitor 生成的 Android 工程',
+      'ft.1':'小小百科 · 给 3–8 岁孩子的离线早教应用','ft.2':'插画与内容为原创，不包含任何第三方素材','ft.3':'进度只存在本机，不收集任何数据'
+    },
+    en: {
+      'nav.features':'Features','nav.shots':'Screens','nav.tech':'Tech','nav.quality':'Quality','nav.start':'Get started',
+      'hero.p1':'Fully offline','hero.p2':'PWA','hero.p3':'Android APK','hero.p4':'Zero runtime deps',
+      'hero.h1':"A child's<br>first encyclopedia",
+      'hero.lede':'An offline early-learning app for ages <b>3–8</b>. <b>7 sections</b>, <b>160 topics</b>, <b>1127 hand-painted watercolor illustrations</b>, with narration and varied interactive exercises. No network, no ads, no account — progress stays on the device.',
+      'hero.cta1':'Quick start','hero.cta2':'See screens','hero.cta3':'How it works',
+      'hero.c1':'# serve locally (native ESM needs http)','hero.c2':'# open http://127.0.0.1:8765',
+      'stat.kp':'topics','stat.sec':'sections','stat.lv':'levels','stat.art':'illustrations','stat.audio':'audio clips','stat.test':'unit tests','stat.gate':'quality gates',
+      'feat.h2':'Not another "tap it and something animates" app',
+      'feat.sub':'Every interaction asks the child to judge, construct or explain something. These six things are the real skeleton.',
+      'f1.t':'Five-stage inquiry lesson','f1.d':'A lesson runs introduce → investigate → apply → express → check. Not a fact plus a quiz question, but a full cognitive loop: raise a question, go find clues, then say it out loud.',
+      'f2.t':'Evidence cards and a work wall','f2.d':'Each lesson produces an explorer card. The child picks one of three facts as "the one I remember" — there is no right answer. Cards accumulate into a wall, and days later the app brings an old one back asking "do you remember this one?"',
+      'f3.t':'Narration and read-along','f3.d':'807 audio clips cover page-by-page read-aloud, questions, feedback and praise. Read-along is a self-confirmation fallback — one tap on "I can read it", with <b>no recording and no microphone permission</b>.',
+      'f4.t':'Varied interaction types','f4.d':'Beyond listen-and-pick, matching, ordering and multiple choice: tracing, coloring, whack-a-mole, egg smashing, branching experiments, magnifier word hunting. Types register through one contract, so adding one never touches the UI.',
+      'f5.t':'Six-step ability ladder','f5.d':'S1 perceive → S2 distinguish → S3 relate → S4 understand → S5 reason → S6 transfer. Levelled by what the child can actually do, not by age — and you can always just show everything.',
+      'f6.t':'Parent panel and feedback fallback chain','f6.d':'The growth report reads local data only and uploads nothing. Feedback degrades in three tiers: a real adult responds → the system revisits an old piece of work → structured self-assessment prompts. <b>Asking opens children up better than praising.</b>',
+      'shot.h2':'Screens','shot.sub':'All illustrations are original hand-painted watercolor, generated under one style spec and checked per image for generation consistency.',
+      's1':'Home · pick a direction','s2':'Section · ladder and modules','s3':'Lesson · picture book and narration','s5':'Work wall · revisiting old cards','s6':'Parent panel · growth report',
+      's4.t':'A lesson ends with a card, not a score',
+      's4.p':'The report page does not rank or grade the child. It turns what was just learned into something they can carry away. They pick one of three facts as <b>"the one I remember" — no right answer, any choice is fine</b>.',
+      's4.a':'A three-part card: fixed decoration, the child\'s own data, fixed footer',
+      's4.b':'The card joins the work wall; days later the app brings it back asking "do you remember this one?"',
+      's4.c':'A parent can tap "let mom or dad hear me"; the panel tells them exactly what to do',
+      'tech.h2':'How it works','tech.sub':'No framework, no bundler, no runtime node_modules. Opening <code>index.html</code> is the whole app.',
+      't1.t':'Architecture','t1.a':'Native ES Modules, <b>zero build, zero runtime dependencies</b>','t1.b':'Layering only allows <code>core</code> → <code>ui</code> → <code>data</code>, top down','t1.c':'New quiz types follow the <code>src/quiz-types/</code> contract <code>{id,name,validate,create}</code>','t1.d':'External dependencies are always injected; the content layer is pure data',
+      't2.t':'Offline first','t2.a':'A service worker precaches everything, so it works with no network','t2.b':'No backend, no network requests, no accounts, no tracking','t2.c':'Progress lives in <code>localStorage</code>, with version migration and graceful fallback for corrupt data','t2.d':'Installable as a PWA, runs in its own window',
+      't3.t':'Android packaging','t3.a':'Capacitor packs <code>www/</code> into a WebView','t3.b':'One command: <code>npm run apk</code>','t3.c':'The only permission requested is <code>INTERNET</code> — no microphone, no camera','t3.d':'Zero native libraries: pure web assets behind a very thin shell',
+      'q.h2':'Six quality gates','q.sub':'Content, behaviour, reachability, media, illustration quality and style generation each have a dedicated automated check. All must be green before a commit.',
+      'q.c1':'Gate','q.c2':'What it checks','q.c3':'Current',
+      'q.r1':'Content structure, unique ids, valid quiz types, in-range answers, illustration references, level completeness','q.r2':'Behaviour-contract unit tests','q.r3':'Entry reachability plus two-way Service Worker manifest check','q.r4':'Whether media files exist on disk','q.r5':'Resolution, three distinct book pages, covers not reusing inner pages, code-reachable image paths','q.r6':'Whether all user-visible illustrations sit in the same style generation',
+      'st.h2':'Get started','st.sub':'You only need Node 22+ and Python 3 (Python just serves static files locally).',
+      'st.a.t':'Run it as a website','st.a.1':'# after cloning, enter the directory','st.a.2':'# serve locally (native ESM needs http)','st.a.3':'# open http://127.0.0.1:8765 in a browser',
+      'st.b.t':'Build an APK','st.b.1':'# run gates, sync to the Android project, build','st.b.2':'# output in android/app/build/outputs/apk/debug/',
+      'st.c.t':'Development commands','st.c.1':'# validate + test, run before every commit','st.c.2':'# run all six gates at once','st.c.3':'# generate www/ for Capacitor',
+      'tree.h2':'Project layout','tree.sub':'Exactly one file knows who depends on whom; every other module only honours its own contract.',
+      'tree.a':'App shell, mounting only','tree.b':'Service worker, precaches everything','tree.c':'PWA manifest','tree.d':'Assembly layer: the only place that knows dependencies',
+      'tree.e':'DOM helpers, storage, speech, router, preferences','tree.f':'Home, sections, lesson, work wall, parent panel','tree.g':'Content for nine domains plus the curriculum matrix, pure data',
+      'tree.h':'Quiz type contract and implementations','tree.i':'Illustration registry (inline SVG plus image paths)','tree.j':'Watercolor illustrations and mascot',
+      'tree.k':'268 behaviour-contract unit tests','tree.l':'Six quality gates and build scripts','tree.m':'Architecture, art style spec, contributing guide','tree.n':'Generated Capacitor Android project',
+      'ft.1':'Kids Encyclopedia · an offline early-learning app for ages 3–8','ft.2':'All illustrations and content are original; no third-party assets','ft.3':'Progress stays on the device; no data is collected'
+    }
+  };
+
+  var nodes = document.querySelectorAll('[data-i18n]');
+  function setLang(lang) {
+    var dict = I18N[lang] || I18N.zh;
+    for (var i = 0; i < nodes.length; i++) {
+      var k = nodes[i].getAttribute('data-i18n');
+      if (dict[k] !== undefined) nodes[i].innerHTML = dict[k];
+    }
+    document.body.setAttribute('data-lang', lang);
+    document.documentElement.lang = (lang === 'en') ? 'en' : 'zh-CN';
+    document.getElementById('btn-zh').setAttribute('aria-pressed', String(lang === 'zh'));
+    document.getElementById('btn-en').setAttribute('aria-pressed', String(lang === 'en'));
+    try { localStorage.setItem('kids-site-lang', lang); } catch (e) {}
+  }
+  document.getElementById('btn-zh').addEventListener('click', function () { setLang('zh'); });
+  document.getElementById('btn-en').addEventListener('click', function () { setLang('en'); });
+
+  var saved = 'zh';
+  try { saved = localStorage.getItem('kids-site-lang') || 'zh'; } catch (e) {}
+  setLang(saved === 'en' ? 'en' : 'zh');
+})();
+</script>
+</body>
+</html>

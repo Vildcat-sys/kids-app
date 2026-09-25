@@ -9,7 +9,7 @@
  *
  *   · locateItem 反查错 → 孩子学完一个知识点，进度加到了别的模块头上
  *   · 一个 item 落进两个模块 → 进度分母重复计算，永远到不了 100%
- *   · 某阶段 modules 为空 → 那个阶段白屏（规格 §2.1 明令禁止）
+ *   · 某阶段 modules 为空 → 那个阶段白屏（明令禁止）
  *   · listItemsInModule 返回内部数组而非副本 → 调用方一改就污染课程树
  *
  * validate-content.mjs 只查**结构**（字段齐不齐、142 个 id 落位没有）。
@@ -53,7 +53,7 @@ function flatten() {
 /* ─────────────── 板块 ─────────────── */
 
 test('板块顺序是冻结的（首页按此顺序渲染）', () => {
-  // 规格 §1 明确固定顺序。改了顺序首页就变了，所以钉死在这里。
+  // 板块顺序是固定的。改了顺序首页就变了，所以钉死在这里。
   assert.deepEqual(
     listSections().map((s) => s.id),
     ['science', 'thinking', 'english', 'reading', 'art', 'writing', 'music']
@@ -78,7 +78,7 @@ test('getSection：找不到返回 null，不是 undefined', () => {
 /* ─────────────── 阶段 ─────────────── */
 
 test('每个板块都暴露完整的 S1–S6 六个阶段', () => {
-  // 规格 §2.1：某阶段没内容时 tab 仍要显示，不能整个阶段消失。
+  // 某阶段没内容时 tab 仍要显示，不能整个阶段消失。
   for (const sec of SECTIONS) {
     assert.deepEqual(
       listStages(sec.id).map((s) => s.id),

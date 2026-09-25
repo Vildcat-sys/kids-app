@@ -3,8 +3,8 @@
 ## 一、环境准备
 
 ```bash
-# 只需要 Node 20+ 和 Python 3（Python 只用来起本地服务）
-node -v          # 建议 20 以上
+# 只需要 Node 22+ 和 Python 3（Python 只用来起本地服务）
+node -v          # 需 22 以上，见 package.json 的 engines
 
 # 起本地服务（原生 ESM 必须走 http，不能双击打开）
 cd kids-app

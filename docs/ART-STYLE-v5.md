@@ -4,10 +4,13 @@
 每个知识点 = 3 张绘本页（对应 lead/facts 台词，2048×1536）+ 1 张封面（2048×2048，不得复用内页）。
 
 ## 固定参考图（每张生图都要据此，禁止漂移）
-- 画风参考（水彩手绘小白兔，暖纸质感）：D:\workspace\reference\v5-style\style-bunny.png
-- 奇奇角色基准（手绘版）：D:\workspace\reference\v5-style\qiqi-handdrawn.png
+> 参考图**不入仓**（体积大且非本项目产物）。需要重跑素材时向维护者索取，
+> 放到仓库外任意目录即可，脚本只按文件名读取。
+
+- 画风参考（水彩手绘小白兔，暖纸质感）：`style-bunny.png`
+- 奇奇角色基准（手绘版）：`qiqi-handdrawn.png`
   奇奇固定特征：圆脸蛋小狮子、蓬松橙黄鬃毛、戴绿色探险帽、背蓝色双肩书包、大圆眼、友好微笑。
-- 质量/风格样张（认识蓝色三页）：同目录 sample-blue-sky.png / sample-blue-sea.png / sample-blue-berry.png
+- 质量/风格样张（认识蓝色三页）：`sample-blue-sky.png` / `sample-blue-sea.png` / `sample-blue-berry.png`
 
 ## 提示词硬规则
 - 严禁出现 "Pixar-like"、"3D animated movie style"（旧 3D 后缀全部作废）。
@@ -22,7 +25,7 @@
 - 转 webp 用 `ffmpeg -y -nostdin -i in out.webp`（必带 -nostdin，否则覆盖确认挂死）。
 - 绘本页尺寸 2048×1536；封面 2048×2048。
 - 每批 ≤6 张；生成一张立即落盘一张并用 ffprobe/文件大小校验；断点续跑——磁盘上已是合格图则跳过不重做。
-- 全部原创，禁止从 参考产品* 目录拷任何文件。
+- **全部原创**：不得拷贝任何第三方素材（图片、字体、图标、音频）。
 
 ## 文件映射（关键）
 - 绘本内页：`src/images/book/<itemId>-1.webp`、`-2.webp`、`-3.webp`（-1..-3 对应 facts[0..2]）。
@@ -39,7 +42,7 @@ book 480、封面 160、mascot 1、logo 全套（logo/mascot 由编排统一处�
 
 ### 2026-09-24 · 第一批：美术 / 写字 / 音乐（18 知识点，72 张）
 - 画风 = children-book-style（水彩手绘儿童绘本风，2048×1536 内页 / 2048×2048 封面）。
-- 参考图：`v5-style/style-bunny.png`、`v5-style/qiqi-handdrawn.png`、`v5-style/sample-blue-{sky,sea,berry}.png`。
+- 参考图：`style-bunny.png`、`qiqi-handdrawn.png`、`sample-blue-{sky,sea,berry}.png`。
 - 范围：art 6 点（art-red/blue/yellow/lines/finger-paint/color-mix）、writing 6 点（writing-hold/pose/dian/heng/ri/shan）、music 6 点（music-loud-soft/fast-slow/drum/song/echo/xylophone）。
 - 内页 `src/images/book/<id>-1..3.webp`、封面覆盖 `src/images/{art,writing,music}/<id>.webp`，路径与 art/index.js 注册完全一致；未改任何代码/音频。
 - 提示词硬规则已执行：无 Pixar-like/3D 后缀；末尾固定追加 children's book illustration 文案；保留 no text/no watermark；生图后 curl.exe 下载、ffmpeg -y -nostdin 转 webp。

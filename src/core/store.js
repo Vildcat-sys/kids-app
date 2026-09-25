@@ -198,7 +198,7 @@ export function createStore({ storage, now } = {}) {
 
   /**
    * 刷新连续打卡（在「完成一个新知识点、领取金币」时调用）。
-   * 规则（规格 §4）：
+   * 规则：
    *   - lastDay 已是今天 → 今天已打过卡，不变；
    *   - lastDay 是昨天   → 连续，streak + 1；
    *   - 其他（首次 / 断签）→ streak = 1。

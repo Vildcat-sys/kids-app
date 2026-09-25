@@ -170,7 +170,7 @@ for (const sec of SECTIONS) {
   accentOwner.set(key, sec.id);
 }
 
-/* ─────────────── 7. 课程矩阵（curriculum.js）断言，规格 §3.2 ─────────────── */
+/* ─────────────── 7. 课程矩阵（curriculum.js）断言 ─────────────── */
 const mapped = mappedItemIds();
 
 // 7.1 每个注册知识点都必须落位到课程矩阵

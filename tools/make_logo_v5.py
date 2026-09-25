@@ -4,7 +4,9 @@ ROOT = r"D:\Wordbuddy-Demo\kids-app"
 BRAND = os.path.join(ROOT, "src", "images", "brand")
 RES = os.path.join(ROOT, "android", "app", "src", "main", "res")
 WARM = (255, 244, 224)
-fullbleed = Image.open(r"D:\workspace\reference\v5-style\qiqi-handdrawn.png").convert("RGB")
+# 参考图不入仓：把它放到环境变量 KIDS_LOGO_REF 指向的路径再跑本脚本。
+REF = os.environ.get("KIDS_LOGO_REF", os.path.join(ROOT, "assets-ref", "qiqi-handdrawn.png"))
+fullbleed = Image.open(REF).convert("RGB")
 fullbleed.resize((1024,1024), Image.LANCZOS).save(os.path.join(BRAND,"logo-1024.png"))
 def round_mask(img):
     s=img.size[0]; m=Image.new("L",(s,s),0); ImageDraw.Draw(m).ellipse((0,0,s,s),fill=255)
