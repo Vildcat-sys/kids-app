@@ -32,7 +32,10 @@
 // v19：9 玩法落地——新增 quiz-types/egg.js、trace.js、coloring.js、mole.js、branch.js；
 //     reward.js 存钱罐（飞罐+液面+投币/晃罐音）；lesson.js 报告满分/未满分两态；
 //     book-library/card 加分级星章/已读/放大镜/点词翻译。
-const CACHE = 'kids-encyclopedia-v19';
+// v20：画风统一收尾——10 张用户可见旧 3D 风图重绘为 v5 水彩（编钟/钢琴/小提琴/灯塔/
+//     雪山温度计/踏石/松鼠年轮/蜜蜂/大小熊/鼓与竖琴），新增 tools/check-style.mjs 画风闸。
+//     原地替换图片 URL 不变，升缓存版本以清掉设备 runtime 里残留的旧 3D 图。
+const CACHE = 'kids-encyclopedia-v20';
 
 const ASSETS = [
   './',
